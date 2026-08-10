@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "analytics.apps.AnalyticsConfig",
     "discovery.apps.DiscoveryConfig",
     "seo.apps.SeoConfig",
-    "django_erd_generator",
+    
 
 ]
 

@@ -19,7 +19,8 @@ class MediaAsset(models.Model):
     on_delete=models.SET_NULL,
     null=True,
     related_name="uploaded_media_assets",
-)
+    )
+    
     file = models.FileField(
     upload_to="uploads/%Y/%m/",
     )
@@ -75,8 +76,8 @@ class MediaAsset(models.Model):
     )
 
     is_active = models.BooleanField(
-    default=True,
-    db_index=True,
+        default=True,
+        db_index=True,
     )
 
     created_at = models.DateTimeField(
