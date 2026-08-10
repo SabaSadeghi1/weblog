@@ -1,0 +1,163 @@
+Table LogEntry {
+  id "integer" [primary key]
+  action_time "text" 
+  user_id "integer" 
+  content_type_id "integer" 
+  object_id "text" 
+  object_repr "varchar" 
+  action_flag "smallint unsigned" 
+  change_message "text" 
+}
+Table Permission {
+  id "integer" [primary key]
+  name "varchar" 
+  content_type_id "integer" 
+  codename "varchar" 
+}
+Table Group {
+  id "integer" [primary key]
+  name "varchar" 
+}
+Table ContentType {
+  id "integer" [primary key]
+  app_label "varchar" 
+  model "varchar" 
+}
+Table Session {
+  session_key "varchar" [primary key]
+  session_data "text" 
+  expire_date "text" 
+}
+Table User {
+  id "integer" [primary key]
+  password "varchar" 
+  last_login "text" 
+  is_superuser "bool" 
+  username "varchar" 
+  first_name "varchar" 
+  last_name "varchar" 
+  is_staff "bool" 
+  is_active "bool" 
+  date_joined "text" 
+  email "varchar" 
+}
+Table UserProfile {
+  id "integer" [primary key]
+  user_id "integer" 
+  display_name "varchar" 
+  bio "text" 
+  avatar "varchar" 
+  phone "varchar" 
+  website "varchar" 
+  created_at "text" 
+  updated_at "text" 
+}
+Table SiteSettings {
+  id "integer" [primary key]
+  singleton_key "varchar" 
+  site_name "varchar" 
+  site_description "text" 
+  default_seo_title "varchar" 
+  default_seo_description "text" 
+  posts_per_page "integer unsigned" 
+  registration_enabled "bool" 
+  comments_require_approval "bool" 
+  updated_by_id "integer" 
+  created_at "text" 
+  updated_at "text" 
+}
+Table BlogCategory {
+  id "integer" [primary key]
+  name "varchar" 
+  slug "varchar" 
+  description "text" 
+  is_active "bool" 
+  created_at "text" 
+  updated_at "text" 
+}
+Table BlogPost {
+  id "integer" [primary key]
+  author_user_id "integer" 
+  category_id "integer" 
+  title "varchar" 
+  slug "varchar" 
+  summary "varchar" 
+  content "text" 
+  status "varchar" 
+  is_featured "bool" 
+  published_at "text" 
+  seo_title "varchar" 
+  seo_description "varchar" 
+  created_at "text" 
+  updated_at "text" 
+}
+Table BlogTag {
+  id "integer" [primary key]
+  name "varchar" 
+  slug "varchar" 
+  is_active "bool" 
+  created_at "text" 
+  updated_at "text" 
+}
+Table BlogPostTag {
+  id "integer" [primary key]
+  post_id "integer" 
+  tag_id "integer" 
+}
+Table MediaAsset {
+  id "integer" [primary key]
+  uploaded_by_id "integer" 
+  file "varchar" 
+  original_name "varchar" 
+  mime_type "varchar" 
+  file_size "bigint unsigned" 
+  width "integer unsigned" 
+  height "integer unsigned" 
+  duration "integer unsigned" 
+  title "varchar" 
+  alt_text "varchar" 
+  caption "text" 
+  is_active "bool" 
+  created_at "text" 
+  updated_at "text" 
+  media_type "varchar" 
+}
+Table BlogPostMedia {
+  id "integer" [primary key]
+  post_id "integer" 
+  media_asset_id "integer" 
+  purpose "varchar" 
+  caption "text" 
+  alt_text "varchar" 
+  sort_order "integer unsigned" 
+  is_active "bool" 
+  created_at "text" 
+}
+Table BlogPostDailyStat {
+  id "integer" [primary key]
+  post_id "integer" 
+  stat_date "text" 
+  views "integer unsigned" 
+  unique_views "integer unsigned" 
+  reactions "integer unsigned" 
+  comments "integer unsigned" 
+  bookmarks "integer unsigned" 
+  shares "integer unsigned" 
+}
+Ref: BlogPostDailyStat.post_id > BlogPost.id
+Ref: BlogTag.id <> BlogPost.id
+Ref: MediaAsset.uploaded_by_id > User.id
+Ref: SiteSettings.updated_by_id > User.id
+Ref: UserProfile.id - User.id
+Ref: BlogPostMedia.post_id > BlogPost.id
+Ref: BlogPostMedia.media_asset_id > MediaAsset.id
+Ref: BlogPostTag.post_id > BlogPost.id
+Ref: BlogPostTag.tag_id > BlogTag.id
+Ref: Group.id <> User.id
+Ref: Group.id <> Permission.id
+Ref: LogEntry.user_id > User.id
+Ref: LogEntry.content_type_id > ContentType.id
+Ref: BlogPost.author_user_id > User.id
+Ref: BlogPost.category_id > BlogCategory.id
+Ref: Permission.id <> User.id
+Ref: Permission.content_type_id > ContentType.id
