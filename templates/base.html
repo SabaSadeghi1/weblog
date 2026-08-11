@@ -1,47 +1,102 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta
+        name="description"
+        content="Share posts, ideas, photos, videos, and conversations."
+    >
+
     <title>
-        {% block title %}وبلاگ{% endblock %}
+        {% block title %}Comentic — Share what matters{% endblock %}
     </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&display=swap"
+        rel="stylesheet"
+    >
 
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
-    {% block extra_css %}
-    {% endblock %}
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
     <header class="site-header">
-        <div class="container header-content">
-            <a class="site-logo" href="{% url 'core:landing' %}">
-                وبلاگ
+        <div class="container navbar">
+            <a
+                class="brand"
+                href="{% url 'core:landing' %}"
+                aria-label="Comentic home"
+            >
+                <span class="brand-mark">
+                    <span></span>
+                </span>
+
+                <span>Comentic</span>
             </a>
 
-            <nav class="site-nav">
-                <a href="{% url 'core:landing' %}">خانه</a>
-                <a href="/posts/">مقاله‌ها</a>
+            <nav class="main-navigation" aria-label="Main navigation">
+                <a href="{% url 'core:landing' %}">Home</a>
+                <a href="/posts/">Posts</a>
+                <a href="{% url 'core:landing' %}#topics">Topics</a>
+                <a href="{% url 'core:landing' %}#about">About</a>
             </nav>
         </div>
     </header>
 
-    <main>
-        {% block content %}
-        {% endblock %}
+    <main id="main-content">
+        {% block content %}{% endblock %}
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>تمام حقوق این وب‌سایت محفوظ است.</p>
+    <footer class="site-footer" id="about">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a
+                    class="brand brand--footer"
+                    href="{% url 'core:landing' %}"
+                >
+                    <span class="brand-mark">
+                        <span></span>
+                    </span>
+
+                    <span>Comentic</span>
+                </a>
+
+                <p>
+                    A community for sharing ideas, photos, videos,
+                    and meaningful conversations.
+                </p>
+            </div>
+
+            <div class="footer-column">
+                <span>Explore</span>
+                <a href="/posts/">Posts</a>
+                <a href="{% url 'core:landing' %}#topics">Topics</a>
+            </div>
+
+            <div class="footer-column">
+                <span>Community</span>
+                <a href="{% url 'core:landing' %}#about">About</a>
+                <a href="/admin/">Create a post</a>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p>© {% now "Y" %} Comentic. All rights reserved.</p>
+            <p>Share ideas. Start conversations.</p>
         </div>
     </footer>
 
-    {% block extra_js %}
-    {% endblock %}
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
