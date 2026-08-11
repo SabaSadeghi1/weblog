@@ -7,7 +7,7 @@ from blog import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('blog/', views.post_list, name='post_list'),
+    path('posts/', views.post_list, name='post_list'),
     path("", include("core.urls")),
 ]
 

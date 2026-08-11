@@ -1,3 +1,82 @@
 {% extends "base.html" %}
+{% load static %}
 
-<h1>Blog Posts</h1>
+
+{% block title %}
+Posts
+{% endblock %}
+
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/post_list.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="post-list">
+
+    <h1>Post List</h1>
+
+    {% for post in posts %}
+
+        <div class="post-card">
+
+            <h2>{{ post.title }}</h2>
+
+            <p><b>Author:</b> {{ post.author_user.username }}</p>
+
+            <p><b>Category:</b> {{ post.category }}</p>
+
+            <p><b>Slug:</b> {{ post.slug }}</p>
+
+            <p><b>Summary:</b> {{ post.summary }}</p>
+
+            <p><b>Content:</b> {{ post.content }}</p>
+
+            <p><b>Status:</b> {{ post.get_status_display }}</p>
+
+            {% if post.is_featured %}
+                <p class="featured">Featured Post ⭐</p>
+            {% else %}
+                <p>Regular Post</p>
+            {% endif %}
+
+            <p><b>Published At:</b> {{ post.published_at }}</p>
+
+            <p><b>Created At:</b> {{ post.created_at }}</p>
+
+            <p><b>Updated At:</b> {{ post.updated_at }}</p>
+
+            <p><b>SEO Title:</b> {{ post.seo_title }}</p>
+
+            <p><b>SEO Description:</b> {{ post.seo_description }}</p>
+
+
+            <p><b>Tags:</b></p>
+
+            <div class="tags">
+
+                {% for tag in post.tags.all %}
+
+                    <span>{{ tag }}</span>
+
+                {% empty %}
+
+                    <span>No tags</span>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <p class="empty">No posts found.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
