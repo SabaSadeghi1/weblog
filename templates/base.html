@@ -47,7 +47,7 @@
 
             <nav class="main-navigation" aria-label="Main navigation">
                 <a href="{% url 'core:landing' %}">Home</a>
-                <a href="/posts/">Posts</a>
+                <a href="{% url 'blog:post_list' %}">Posts</a>
                 <a href="{% url 'core:landing' %}#topics">Topics</a>
                 <a href="{% url 'core:landing' %}#about">About</a>
             </nav>
