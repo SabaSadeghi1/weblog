@@ -1,0 +1,57 @@
+.post-detail {
+    max-width: 850px;
+    margin: 50px auto;
+}
+
+.post-header {
+    margin-bottom: 40px;
+}
+
+.post-category {
+    display: inline-block;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.post-title {
+    font-size: 42px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+}
+
+.post-summary {
+    font-size: 18px;
+    line-height: 1.9;
+    margin-bottom: 20px;
+}
+
+.post-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+.post-content {
+    font-size: 17px;
+    line-height: 2.1;
+    margin-bottom: 40px;
+}
+
+.post-content p {
+    margin-bottom: 20px;
+}
+
+.post-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.post-tag {
+    padding: 6px 12px;
+    border: 1px solid;
+    border-radius: 20px;
+    font-size: 14px;
+}
