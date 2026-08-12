@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="register-page">
+
+    <div class="register-card">
+
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Join our blog and start exploring posts.</p>
+        </div>
+
+        <form method="post" class="register-form">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="register-btn">
+                Register
+            </button>
+
+        </form>
+
+        <div class="register-footer">
+            <p>
+                Already have an account?
+                <a href="#">Login</a>
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,161 +1,203 @@
-body {
-    background: linear-gradient(135deg, #f5f7fa, #eef2f7);
-    color: #1f2937;
-    font-family: Arial, sans-serif;
-}
-
-
-.post-list {
-    width: 85%;
-    max-width: 1200px;
-    margin: 50px auto;
+.posts-page {
+    width: 88%;
+    max-width: 1300px;
+    margin: 60px auto;
     direction: ltr;
-    text-align: left;
 }
 
 
-.post-list h1 {
-    text-align: center;
-    font-size: 42px;
+.posts-header {
     margin-bottom: 45px;
-    color: #111827;
-    letter-spacing: 1px;
 }
 
+
+.posts-header h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+    color: #172554;
+}
+
+
+.posts-header p {
+    color: #64748b;
+    font-size: 16px;
+}
+
+
+/* POST GRID */
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+
+/* POST CARD */
 
 .post-card {
-    position: relative;
-
-    background: rgba(255, 255, 255, 0.95);
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
 
     border: 1px solid #e5e7eb;
-    border-radius: 18px;
 
-    padding: 30px;
-    margin-bottom: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 
 .post-card:hover {
-    transform: translateY(-7px);
+    transform: translateY(-8px);
 
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
-
-    border-color: #c7d2fe;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.13);
 }
 
 
-.post-card h2 {
-    font-size: 30px;
+/* IMAGE */
 
-    margin-top: 0;
-    margin-bottom: 20px;
+.post-image {
+    height: 230px;
 
-    color: #312e81;
+    position: relative;
+
+    background: linear-gradient(
+        135deg,
+        #172554,
+        #2563eb
+    );
 }
 
 
-.post-card p {
-    margin: 10px 0;
+/* CATEGORY */
 
-    font-size: 15px;
+.category-badge {
+    position: absolute;
 
-    line-height: 1.8;
-
-    color: #4b5563;
-}
-
-
-.post-card p b {
-    color: #111827;
-}
-
-
-.featured {
-    display: inline-block;
-
-    background: linear-gradient(90deg, #f59e0b, #f97316);
-
-    color: white !important;
-
-    padding: 7px 14px;
-
-    border-radius: 20px;
-
-    font-weight: bold;
-
-    margin-top: 15px !important;
-}
-
-
-.tags {
-    margin-top: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-
-.tags span {
-    background-color: #eef2ff;
-
-    color: #4338ca;
-
-    border: 1px solid #c7d2fe;
-
-    padding: 6px 12px;
-
-    border-radius: 20px;
-
-    font-size: 13px;
-
-    transition: 0.2s;
-}
-
-
-.tags span:hover {
-    background-color: #4338ca;
-
-    color: white;
-
-    transform: scale(1.05);
-}
-
-
-.empty {
-    text-align: center;
-
-    padding: 50px;
+    top: 15px;
+    right: 15px;
 
     background-color: white;
 
-    border-radius: 16px;
+    color: #172554;
 
-    color: #6b7280;
+    padding: 7px 13px;
 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 
-@media (max-width: 768px) {
+/* CARD CONTENT */
 
-    .post-list {
+.post-body {
+    padding: 22px;
+}
+
+
+.post-body h2 {
+    margin: 0 0 14px;
+
+    font-size: 21px;
+
+    color: #111827;
+
+    line-height: 1.5;
+}
+
+
+.post-summary {
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+    margin-bottom: 22px;
+}
+
+
+/* FOOTER */
+
+.post-footer {
+    border-top: 1px solid #eef2f7;
+
+    padding-top: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.post-date {
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+.post-footer a {
+    text-decoration: none;
+
+    background-color: #f59e0b;
+
+    color: white;
+
+    padding: 9px 15px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    transition: 0.25s;
+}
+
+
+.post-footer a:hover {
+    background-color: #d97706;
+
+    transform: translateX(3px);
+}
+
+
+/* TABLET */
+
+@media (max-width: 1000px) {
+
+    .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+    .posts-page {
         width: 92%;
     }
 
-    .post-list h1 {
+
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .posts-header h1 {
         font-size: 32px;
     }
 
-    .post-card {
-        padding: 20px;
-    }
-
-    .post-card h2 {
-        font-size: 24px;
-    }
 }
