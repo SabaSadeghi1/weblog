@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
+from django_ckeditor_5.fields import CKEditor5Field
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -11,7 +12,7 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=100, null=True, blank=True)
-    bio = models.TextField(null=True, blank=True)
+    bio = CKEditor5Field(config_name="extends",null=True,blank=True)
     avatar = models.ImageField(upload_to='profiles', null=True, blank=True)
     phone = models.CharField(max_length=14, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
