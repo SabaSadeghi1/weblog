@@ -7,7 +7,9 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("posts/", include("blog.urls")),
+    path("ckeditor5/",include("django_ckeditor_5.urls")),
     path("", include("core.urls")),
+
 ]
 
 if settings.DEBUG:

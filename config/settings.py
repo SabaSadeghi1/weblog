@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "analytics.apps.AnalyticsConfig",
     "discovery.apps.DiscoveryConfig",
     "seo.apps.SeoConfig",
+    "django_ckeditor_5",
     
 
 ]
@@ -142,3 +143,43 @@ MEDIA_ROOT = BASE_DIR / "media_files"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "accounts.User"
+
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
+CKEDITOR_5_MAX_FILE_SIZE = 5
+
+CKEDITOR_5_CONFIGS = {
+    "extends": {
+        "toolbar": {
+            "items": [
+                "undo","redo","|",
+                "heading","|",
+                "bold","italic","underline","strikethrough","|",
+                "fontSize","fontFamily","fontColor","fontBackgroundColor","|",
+                "alignment","|",
+                "link","blockQuote","|",
+                "bulletedList","numberedList","|",
+                "imageUpload","insertImage","mediaEmbed","|",
+                "insertTable","|",
+                "removeFormat",
+            ],
+            "shouldNotGroupWhenFull": True,
+        },
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "imageStyle:alignLeft",
+                "imageStyle:alignCenter",
+                "imageStyle:alignRight",
+                "imageStyle:side",
+            ],
+        },
+        "heading": {
+            "options": [
+                {"model":"paragraph","title":"Paragraph","class":"ck-heading_paragraph"},
+                {"model":"heading1","view":"h1","title":"Heading 1","class":"ck-heading_heading1"},
+                {"model":"heading2","view":"h2","title":"Heading 2","class":"ck-heading_heading2"},
+                {"model":"heading3","view":"h3","title":"Heading 3","class":"ck-heading_heading3"},
+            ],
+        },
+    },
+}
