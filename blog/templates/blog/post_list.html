@@ -48,10 +48,36 @@ Posts
 
 <div class="posts-page">
 
-    <div class="posts-header">
-        <h1>Latest Posts</h1>
-        <p>Discover our latest articles and stories</p>
-    </div>
+<div class="posts-header">
+
+    <h1>Latest Posts</h1>
+
+    <p>
+        Discover our latest posts and stories
+    </p>
+
+
+    {% if request.user.is_authenticated %}
+
+        <a
+            href="{% url 'blog:post_create' %}"
+            class="create-post-btn"
+        >
+            + Create Post
+        </a>
+
+    {% else %}
+
+        <a
+            href="{% url 'login' %}"
+            class="create-post-btn"
+        >
+            Login to create a post
+        </a>
+
+    {% endif %}
+
+</div>
 
     <div class="posts-tools">
 

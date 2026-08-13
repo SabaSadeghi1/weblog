@@ -1,7 +1,10 @@
 from django.db.models import Prefetch, Q
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import BlogPost, BlogCategory
 from media.models import BlogPostMedia
+from django.contrib.auth.decorators import login_required
+from .forms import BlogPostForm
+from media.models import MediaAsset, BlogPostMedia
 
 
 def post_list(request):
@@ -69,6 +72,92 @@ def post_list(request):
         request,
         "blog/post_list.html",
         context
+    )
+
+@login_required(login_url='login')
+def post_create(request):
+
+    if request.method == 'POST':
+
+        form = BlogPostForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            post = form.save(
+                commit=False
+            )
+
+            post.author_user = request.user
+
+            post.status = "pending_review"
+
+            post.save()
+
+
+            cover_image = form.cleaned_data[
+                'cover_image'
+            ]
+
+            cover_alt = (
+                form.cleaned_data.get('cover_alt')
+                or post.title
+            )
+
+
+            media_asset = MediaAsset.objects.create(
+
+                uploaded_by=request.user,
+
+                file=cover_image,
+
+                original_name=cover_image.name,
+
+                mime_type=getattr(
+                    cover_image,
+                    'content_type',
+                    ''
+                ),
+
+                file_size=cover_image.size,
+
+                media_type=MediaAsset.MediaType.IMAGE,
+
+                title=post.title,
+
+                alt_text=cover_alt,
+            )
+
+
+            BlogPostMedia.objects.create(
+
+                post=post,
+
+                media_asset=media_asset,
+
+                purpose=BlogPostMedia.Purpose.COVER,
+
+                alt_text=cover_alt,
+
+                is_active=True,
+            )
+
+
+            return redirect(
+                'blog:post_list'
+            )
+
+    else:
+
+        form = BlogPostForm()
+
+
+    return render(
+        request,
+        'blog/post_create.html',
+        {'form': form}
     )
 
 def post_detail(request, slug):
