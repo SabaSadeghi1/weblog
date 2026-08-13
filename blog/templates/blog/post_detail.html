@@ -2,8 +2,51 @@
 {% load static %}
 
 {% block title %}
-{{ post.title }}
+
+{% if post.seo_title %}
+
+    {{ post.seo_title }}
+
+{% else %}
+
+    {{ post.title }}
+
+{% endif %}
+
 {% endblock %}
+
+{% block seo_meta %}
+
+    <meta
+        name="description"
+        content="{{ post.seo_description|default:post.summary|striptags|truncatechars:160 }}"
+    >
+
+
+    {% if post.status == "published" %}
+
+        <meta
+            name="robots"
+            content="index, follow"
+        >
+
+    {% else %}
+
+        <meta
+            name="robots"
+            content="noindex, nofollow"
+        >
+
+    {% endif %}
+
+
+    <link
+        rel="canonical"
+        href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog:post_detail' slug=post.slug %}"
+    >
+
+{% endblock %}
+
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/post_detail.css' %}">
