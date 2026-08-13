@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+Create Post
+{% endblock %}
+
+
+{% block seo_meta %}
+
+<meta
+    name="robots"
+    content="noindex, nofollow"
+>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/post_create.css' %}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="create-post-page">
+
+    <div class="create-post-container">
+
+        <div class="create-post-heading">
+
+            <span class="create-post-kicker">
+                Share your story
+            </span>
+
+            <h1>
+                Create a new post.
+            </h1>
+
+            <p>
+                Write something worth sharing with the community.
+                Your post will be submitted for review before publication.
+            </p>
+
+        </div>
+
+
+        <div class="create-post-card">
+
+            <div class="review-note">
+
+                <div>
+
+                    <strong>Before you publish</strong>
+
+                    <br>
+
+                    Your post will be sent for review and will appear
+                    publicly after approval.
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                class="create-post-form"
+            >
+
+                {% csrf_token %}
+
+                {{ form.media }}
+
+                {{ form.as_p }}
+
+
+                <div class="create-post-actions">
+
+                    <a
+                        href="{% url 'blog:post_list' %}"
+                        class="create-post-cancel"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="create-post-submit"
+                    >
+                        Submit for Review
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

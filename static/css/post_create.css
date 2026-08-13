@@ -1,0 +1,373 @@
+.create-post-page {
+    min-height: 100vh;
+    padding: 70px 20px 100px;
+    background:
+        radial-gradient(circle at top right, rgba(99, 76, 255, 0.08), transparent 30%),
+        #f8f7f2;
+}
+
+
+.create-post-container {
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+
+.create-post-heading {
+    margin-bottom: 32px;
+}
+
+
+.create-post-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 12px;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    color: #ff6542;
+}
+
+
+.create-post-kicker::before {
+    content: "";
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #ff6542;
+
+    box-shadow: 0 0 0 6px rgba(255, 101, 66, 0.12);
+}
+
+
+.create-post-heading h1 {
+    margin: 0 0 12px;
+
+    font-family: "Newsreader", serif;
+    font-size: clamp(42px, 6vw, 68px);
+    line-height: 0.95;
+    font-weight: 600;
+
+    color: #111111;
+}
+
+
+.create-post-heading p {
+    max-width: 620px;
+
+    margin: 0;
+
+    font-size: 16px;
+    line-height: 1.8;
+
+    color: #6b6b68;
+}
+
+
+/* Main form card */
+
+.create-post-card {
+    background: #ffffff;
+
+    border: 1px solid #e8e6df;
+    border-radius: 26px;
+
+    padding: 42px;
+
+    box-shadow:
+        0 20px 60px rgba(20, 20, 20, 0.07);
+}
+
+
+.create-post-form p {
+    margin: 0 0 24px;
+}
+
+
+.create-post-form label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    color: #252525;
+}
+
+
+.create-post-form input[type="text"],
+.create-post-form input[type="url"],
+.create-post-form input[type="email"],
+.create-post-form input[type="file"],
+.create-post-form select,
+.create-post-form textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+
+    border: 1px solid #deddd7;
+    border-radius: 12px;
+
+    background: #fbfaf7;
+
+    font-family: "Manrope", sans-serif;
+    font-size: 14px;
+
+    color: #181818;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.create-post-form input:focus,
+.create-post-form select:focus,
+.create-post-form textarea:focus {
+    background: #ffffff;
+
+    border-color: #6c4cff;
+
+    box-shadow: 0 0 0 4px rgba(108, 76, 255, 0.1);
+}
+
+
+.create-post-form textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+
+.create-post-form select {
+    cursor: pointer;
+}
+
+
+/* File upload */
+
+.create-post-form input[type="file"] {
+    padding: 12px;
+
+    color: #656565;
+}
+
+
+.create-post-form input[type="file"]::file-selector-button {
+    margin-right: 12px;
+
+    padding: 9px 14px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #f0edff;
+
+    color: #5b3fe5;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* CKEditor */
+
+.create-post-form .django-ckeditor-widget {
+    width: 100% !important;
+}
+
+
+.create-post-form .ck-editor {
+    width: 100%;
+}
+
+
+.create-post-form .ck-editor__editable {
+    min-height: 260px;
+
+    border-radius: 0 0 12px 12px !important;
+}
+
+
+/* Help text */
+
+.create-post-form .helptext {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #92918c;
+}
+
+
+/* Errors */
+
+.create-post-form .errorlist {
+    list-style: none;
+
+    padding: 12px 15px;
+    margin: 0 0 12px;
+
+    border-radius: 10px;
+
+    background: #fff0ed;
+
+    color: #c63c24;
+
+    font-size: 13px;
+}
+
+
+/* Bottom buttons */
+
+.create-post-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    margin-top: 35px;
+    padding-top: 28px;
+
+    border-top: 1px solid #eceae4;
+}
+
+
+.create-post-cancel {
+    padding: 13px 20px;
+
+    border: 1px solid #dad8d2;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #444;
+
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+
+.create-post-cancel:hover {
+    background: #f5f4ef;
+
+    color: #111;
+}
+
+
+.create-post-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 14px 25px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    font-family: "Manrope", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.create-post-submit:hover {
+    transform: translateY(-2px);
+
+    background: #6c4cff;
+}
+
+
+/* Pending review message */
+
+.review-note {
+    display: flex;
+    gap: 12px;
+
+    margin-bottom: 28px;
+    padding: 15px 17px;
+
+    border-radius: 13px;
+
+    background: #f4f1ff;
+
+    color: #5845a7;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+.review-note strong {
+    color: #3e2b91;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    .create-post-page {
+        padding: 45px 14px 70px;
+    }
+
+
+    .create-post-card {
+        padding: 25px 18px;
+
+        border-radius: 18px;
+    }
+
+
+    .create-post-heading h1 {
+        font-size: 44px;
+    }
+
+
+    .create-post-actions {
+        flex-direction: column-reverse;
+    }
+
+
+    .create-post-submit,
+    .create-post-cancel {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+}
