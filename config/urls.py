@@ -20,6 +20,8 @@ urlpatterns = [
     path("", include("core.urls")),
     path("sitemap.xml",sitemap,{"sitemaps": sitemaps},name="django.contrib.sitemaps.views.sitemap",),
     path("robots.txt",seo_views.robots_txt,name="robots_txt"),
+    path('login/',accounts_views.user_login,name='login'),
+    path('logout/',accounts_views.user_logout,name='logout'),
 ]
 
 if settings.DEBUG:
