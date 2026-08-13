@@ -1,4 +1,6 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
+
 from .models import BlogPost
 from .services import publish_due_posts
 
@@ -6,8 +8,32 @@ from .services import publish_due_posts
 def post_list(request):
     publish_due_posts()
 
-    posts = BlogPost.objects.filter(status="published")
-    return render(request, "blog/post_list.html", {"posts":posts})
+    query = request.GET.get("q", "").strip()
+
+    posts = (
+        BlogPost.objects.filter(status="published")
+        .select_related("author_user", "category")
+        .order_by("-published_at", "-created_at")
+    )
+
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query)
+            | Q(summary__icontains=query)
+            | Q(content__icontains=query)
+            | Q(category__name__icontains=query)
+            | Q(author_user__username__icontains=query)
+        ).distinct()
+
+    return render(
+        request,
+        "blog/post_list.html",
+        {
+            "posts": posts,
+            "query": query,
+        },
+    )
+
 
 def post_detail(request, slug):
     publish_due_posts()
