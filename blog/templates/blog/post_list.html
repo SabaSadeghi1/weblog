@@ -182,7 +182,7 @@ Posts
                             {{ post.published_at|date:"M d, Y" }}
                         </span>
 
-                        <a href="/posts/{{ post.slug }}/">
+                        <a href="{{ post.get_absolute_url }}">
                             Read More →
                         </a>
 
