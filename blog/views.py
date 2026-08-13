@@ -1,14 +1,13 @@
 from django.db.models import Prefetch, Q
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import BlogPost, BlogCategory
-from media.models import BlogPostMedia
 from django.contrib.auth.decorators import login_required
+from .models import BlogPost, BlogCategory
 from .forms import BlogPostForm
+from .services import publish_due_posts
 from media.models import MediaAsset, BlogPostMedia
 
-
 def post_list(request):
-
+    publish_due_posts()
     active_covers = BlogPostMedia.objects.filter(
         purpose=BlogPostMedia.Purpose.COVER,
         is_active=True,
@@ -161,14 +160,22 @@ def post_create(request):
     )
 
 def post_detail(request, slug):
+    publish_due_posts()
 
     post = get_object_or_404(
-        BlogPost,
-        slug=slug
+        BlogPost.objects.select_related("author_user","category").prefetch_related("tags"),
+        slug=slug,
+        status="published",
     )
+
+    cover = BlogPostMedia.objects.filter(
+        post=post,
+        purpose=BlogPostMedia.Purpose.COVER,
+        is_active=True,
+    ).select_related("media_asset").first()
 
     return render(
         request,
         "blog/post_detail.html",
-        {"post": post}
+        {"post":post,"cover":cover},
     )
