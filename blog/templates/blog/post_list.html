@@ -6,6 +6,38 @@
 Posts
 {% endblock %}
 
+{% block seo_meta %}
+
+<meta
+    name="description"
+    content="Discover the latest posts and conversations."
+>
+
+
+{% if q %}
+
+    <meta
+        name="robots"
+        content="noindex, follow"
+    >
+
+{% else %}
+
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+{% endif %}
+
+
+<link
+    rel="canonical"
+    href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog:post_list' %}"
+>
+
+{% endblock %}
+
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/post_list.css' %}">
@@ -21,6 +53,59 @@ Posts
         <p>Discover our latest articles and stories</p>
     </div>
 
+    <div class="posts-tools">
+
+                <form method="get" class="posts-search">
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ q }}"
+                        placeholder="Search posts..."
+                    >
+
+                    {% if selected_category %}
+
+                        <input
+                            type="hidden"
+                            name="category"
+                            value="{{ selected_category }}"
+                        >
+
+                    {% endif %}
+
+                    <button type="submit">
+                        Search
+                    </button>
+
+                </form>
+
+
+                <div class="category-filter">
+
+                    <a
+                        href="{% url 'blog:post_list' %}"
+                        class="{% if not selected_category %}active{% endif %}"
+                    >
+                        All
+                    </a>
+
+
+                    {% for category in categories %}
+
+                        <a
+                            href="?category={{ category.slug }}"
+                            class="{% if selected_category == category.slug %}active{% endif %}"
+                        >
+                            {{ category.name }}
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
 
     <div class="posts-grid">
 
@@ -30,16 +115,31 @@ Posts
 
                 <div class="post-image">
 
-                    <!-- فعلاً عکس را بعداً وصل می‌کنیم -->
+                    {% if post.active_covers %}
+
+                        <img
+                            src="{{ post.active_covers.0.media_asset.file.url }}"
+                            alt="{{ post.active_covers.0.alt_text|default:post.title }}"
+                        >
+
+                    {% else %}
+
+                        <div class="post-image-placeholder">
+                            No Image
+                        </div>
+
+                    {% endif %}
+
 
                     {% if post.category %}
+
                         <span class="category-badge">
-                            {{ post.category }}
+                            {{ post.category.name }}
                         </span>
+
                     {% endif %}
 
                 </div>
-
 
                 <div class="post-body">
 

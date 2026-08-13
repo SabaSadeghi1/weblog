@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "discovery.apps.DiscoveryConfig",
     "seo.apps.SeoConfig",
     "django_ckeditor_5",
-    
+    'django.contrib.sitemaps',    
 
 ]
 
