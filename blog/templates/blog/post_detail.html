@@ -113,7 +113,267 @@
     <div class="post-content ck-content">
         {{ post.content|safe }}
     </div>
+    {% if content_media %}
 
+    <section
+        class="post-media"
+        aria-labelledby="post-media-title"
+    >
+
+        <h2 id="post-media-title">
+            Post media
+        </h2>
+
+        {% for item in content_media %}
+
+            {% with asset=item.media_asset %}
+
+                <article class="post-media-item">
+
+                    {% if asset.media_type == "image" %}
+
+                        <img
+                            src="{{ asset.file.url }}"
+                            alt="{{ item.alt_text|default:asset.alt_text|default:post.title }}"
+                            loading="lazy"
+                        >
+
+                    {% elif asset.media_type == "video" %}
+
+                        <video controls preload="metadata">
+
+                            <source
+                                src="{{ asset.file.url }}"
+                                type="{{ asset.mime_type }}"
+                            >
+
+                            Your browser cannot play this video.
+
+                            <a
+                                href="{{ asset.file.url }}"
+                                download
+                            >
+                                Download video
+                            </a>
+
+                        </video>
+
+                    {% elif asset.media_type == "audio" %}
+
+                        <audio controls preload="metadata">
+
+                            <source
+                                src="{{ asset.file.url }}"
+                                type="{{ asset.mime_type }}"
+                            >
+
+                            Your browser cannot play this audio.
+
+                            <a
+                                href="{{ asset.file.url }}"
+                                download
+                            >
+                                Download audio
+                            </a>
+
+                        </audio>
+
+                    {% elif asset.media_type == "pdf" %}
+
+                        <object
+                            data="{{ asset.file.url }}"
+                            type="application/pdf"
+                            class="post-media-pdf"
+                        >
+
+                            <a
+                                href="{{ asset.file.url }}"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                Open PDF
+                            </a>
+
+                        </object>
+
+                    {% else %}
+
+                        <a
+                            class="post-file-download"
+                            href="{{ asset.file.url }}"
+                            download
+                        >
+
+                            <span>
+                                {{ asset.original_name }}
+                            </span>
+
+                            <strong>
+                                Download {{ asset.get_media_type_display }}
+                            </strong>
+
+                        </a>
+
+                    {% endif %}
+
+                    {% if item.caption or asset.caption %}
+
+                        <p class="post-media-caption">
+                            {{ item.caption|default:asset.caption }}
+                        </p>
+
+                    {% endif %}
+
+                </article>
+
+            {% endwith %}
+
+        {% endfor %}
+
+    </section>
+
+{% endif %}
+
+
+
+<section class="post-social" aria-labelledby="post-social-title">
+    <div class="post-social-header">
+        <h2 id="post-social-title">Interactions</h2>
+        <div class="post-social-counts">
+            <span>{{ post.reaction_count }} reactions</span>
+            <span>{{ post.bookmark_count }} bookmarks</span>
+            <span>{{ post.comment_count }} comments</span>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="post-social-actions">
+            <div class="reaction-actions">
+                {% for value, label in reaction_choices %}
+                    <form method="post" action="{% url 'social:reaction_toggle' post.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="reaction_type" value="{{ value }}">
+                        <button
+                            type="submit"
+                            class="social-button {% if current_reaction == value %}is-active{% endif %}"
+                        >
+                            {{ label }}
+                        </button>
+                    </form>
+                {% endfor %}
+            </div>
+
+            <form method="post" action="{% url 'social:bookmark_toggle' post.id %}">
+                {% csrf_token %}
+                <button type="submit" class="social-button {% if is_bookmarked %}is-active{% endif %}">
+                    {% if is_bookmarked %}Remove bookmark{% else %}Bookmark{% endif %}
+                </button>
+            </form>
+        </div>
+
+        <details class="report-box">
+            <summary>Report this post</summary>
+            <form method="post" action="{% url 'social:report_content' %}" class="social-form">
+                {% csrf_token %}
+                <input type="hidden" name="post_id" value="{{ post.id }}">
+                <label>
+                    Reason
+                    <select name="reason" required>
+                        {% for value, label in report_reasons %}
+                            <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>
+                    Description
+                    <textarea name="description" rows="3"></textarea>
+                </label>
+                <button type="submit" class="social-button">Send report</button>
+            </form>
+        </details>
+    {% else %}
+        <p class="social-login-note">
+            <a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in</a>
+            to react, bookmark, comment or report.
+        </p>
+    {% endif %}
+</section>
+
+<section class="comments-section" aria-labelledby="comments-title">
+    <div class="post-social-header">
+        <h2 id="comments-title">Comments</h2>
+        <span>{{ post.comment_count }} approved</span>
+    </div>
+
+    {% if post.allow_comments %}
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'social:comment_create' post.id %}" class="social-form comment-form">
+                {% csrf_token %}
+                <label>
+                    Add a comment
+                    <textarea name="content" maxlength="5000" rows="4" required></textarea>
+                </label>
+                <button type="submit" class="social-button">Submit comment</button>
+                <small>New comments are sent for moderation before they appear publicly.</small>
+            </form>
+        {% endif %}
+    {% else %}
+        <p class="comments-closed">Comments are closed for this post.</p>
+    {% endif %}
+
+    <div class="comment-list">
+        {% for comment in comments %}
+            <article class="comment-card">
+                <div class="comment-meta">
+                    <strong>{{ comment.user }}</strong>
+                    <span>{{ comment.created_at|date:"Y/m/d - H:i" }}</span>
+                    {% if comment.is_edited %}<span>edited</span>{% endif %}
+                </div>
+                <p>{{ comment.content|linebreaksbr }}</p>
+
+                {% if user.is_authenticated and post.allow_comments %}
+                    <details class="reply-box">
+                        <summary>Reply</summary>
+                        <form method="post" action="{% url 'social:comment_create' post.id %}" class="social-form compact-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                            <textarea name="content" maxlength="5000" rows="3" required></textarea>
+                            <button type="submit" class="social-button">Submit reply</button>
+                        </form>
+                    </details>
+
+                    <details class="report-box compact-report">
+                        <summary>Report comment</summary>
+                        <form method="post" action="{% url 'social:report_content' %}" class="social-form compact-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                            <select name="reason" required>
+                                {% for value, label in report_reasons %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            <textarea name="description" rows="2" placeholder="Optional details"></textarea>
+                            <button type="submit" class="social-button">Send report</button>
+                        </form>
+                    </details>
+                {% endif %}
+
+                {% for reply in comment.approved_replies %}
+                    <article class="comment-reply">
+                        <div class="comment-meta">
+                            <strong>{{ reply.user }}</strong>
+                            <span>{{ reply.created_at|date:"Y/m/d - H:i" }}</span>
+                            {% if reply.is_edited %}<span>edited</span>{% endif %}
+                        </div>
+                        <p>{{ reply.content|linebreaksbr }}</p>
+                    </article>
+                {% endfor %}
+            </article>
+        {% empty %}
+            <p class="no-comments">No approved comments yet.</p>
+        {% endfor %}
+    </div>
+</section>
 
     {% if post.tags.all %}
         <div class="post-tags">

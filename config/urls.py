@@ -15,6 +15,8 @@ sitemaps = {
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("posts/", include("blog.urls")),
+    path("social/", include("social.urls")),
+    path("media-api/", include("media.urls")),
     path('register/', accounts_views.user_register, name='register'),
     path("ckeditor5/",include("django_ckeditor_5.urls")),
     path("", include("core.urls")),
@@ -26,6 +28,5 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT,)
-
 
 

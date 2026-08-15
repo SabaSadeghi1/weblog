@@ -1,5 +1,6 @@
 asgiref==3.12.1
 Django==5.2.16
+django-ckeditor-5==0.2.20
 Faker==40.36.0
 pillow==12.3.0
 psycopg==3.3.4
