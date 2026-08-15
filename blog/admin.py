@@ -3,6 +3,7 @@ from django import forms
 from media.models import MediaAsset, BlogPostMedia
 from .models import BlogCategory, BlogPost, BlogTag, BlogPostTag
 
+
 class BlogPostAdminForm(forms.ModelForm):
     cover_image = forms.ImageField(required=False,label="Cover image")
 

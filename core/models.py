@@ -9,10 +9,31 @@ class SiteSettings(models.Model):
     default_seo_title = models.CharField(max_length=200, null=True, blank=True)
     default_seo_description =CKEditor5Field(config_name="extends",null=True, blank=True)
 #    registration_enabled = models.BooleanField(default=True)
+    posts_per_page = models.PositiveIntegerField(default=9)
+    registration_enabled = models.BooleanField(default=True)
     comments_approval = models.BooleanField(default=False)
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
 
+    
     def __str__(self):
       return self.site_name
+
+    def save(self, *args, **kwargs):
+
+        self.singleton_key = 'global'
+
+        if (
+            not self.pk
+            and SiteSettings.objects.exists()
+        ):
+
+            raise ValueError(
+                'Only one SiteSettings object is allowed.'
+            )
+
+        super().save(
+            *args,
+            **kwargs
+        )

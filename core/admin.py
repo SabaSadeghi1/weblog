@@ -1,5 +1,28 @@
 from django.contrib import admin
+
 from .models import SiteSettings
 
-admin.site.register(SiteSettings)
 
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+
+    def has_add_permission(
+        self,
+        request
+    ):
+
+        if SiteSettings.objects.exists():
+            return False
+
+        return super().has_add_permission(
+            request
+        )
+
+
+    def has_delete_permission(
+        self,
+        request,
+        obj=None
+    ):
+
+        return False

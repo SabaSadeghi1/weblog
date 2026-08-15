@@ -40,7 +40,7 @@ Posts
 
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/post_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/post_list.css' %}?v=10">
 {% endblock %}
 
 
@@ -105,7 +105,82 @@ Posts
                     </button>
 
                 </form>
+                 
+                <form method="get" class="advanced-filter">
 
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ q }}"
+                        placeholder="Search posts..."
+                    >
+
+
+                    <input
+                        type="text"
+                        name="tag"
+                        value="{{ selected_tag }}"
+                        placeholder="Tag"
+                    >
+
+
+                    <input
+                        type="text"
+                        name="author"
+                        value="{{ selected_author }}"
+                        placeholder="Author username"
+                    >
+
+
+                    <input
+                        type="date"
+                        name="date_from"
+                        value="{{ date_from }}"
+                    >
+
+
+                    <input
+                        type="date"
+                        name="date_to"
+                        value="{{ date_to }}"
+                    >
+
+
+                    <select name="ordering">
+
+                        <option
+                            value="newest"
+                            {% if ordering == "newest" %}selected{% endif %}
+                        >
+                            Newest
+                        </option>
+
+                        <option
+                            value="oldest"
+                            {% if ordering == "oldest" %}selected{% endif %}
+                        >
+                            Oldest
+                        </option>
+
+                    </select>
+
+
+                    {% if selected_category %}
+
+                        <input
+                            type="hidden"
+                            name="category"
+                            value="{{ selected_category }}"
+                        >
+
+                    {% endif %}
+
+
+                    <button type="submit">
+                        Apply Filters
+                    </button>
+
+                </form>
 
                 <div class="category-filter">
 
@@ -202,5 +277,36 @@ Posts
     </div>
 
 </div>
+{% if page_obj.has_other_pages %}
+
+<div class="pagination">
+
+    {% if page_obj.has_previous %}
+
+        <a href="?q={{ q|urlencode }}&category={{ selected_category|urlencode }}&tag={{ selected_tag|urlencode }}&author={{ selected_author|urlencode }}&date_from={{ date_from }}&date_to={{ date_to }}&ordering={{ ordering }}&page={{ page_obj.previous_page_number }}">
+            Previous
+        </a>
+
+    {% endif %}
+
+
+    <span>
+        Page {{ page_obj.number }}
+        of {{ page_obj.paginator.num_pages }}
+    </span>
+
+
+    {% if page_obj.has_next %}
+
+        <a href="?q={{ q|urlencode }}&category={{ selected_category|urlencode }}&tag={{ selected_tag|urlencode }}&author={{ selected_author|urlencode }}&date_from={{ date_from }}&date_to={{ date_to }}&ordering={{ ordering }}&page={{ page_obj.next_page_number }}">
+            Next
+        </a>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
 
 {% endblock %}
+
