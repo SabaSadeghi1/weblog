@@ -60,8 +60,6 @@ class Command(BaseCommand):
                     'view_blogreaction',
                     'add_blogbookmark',
                     'view_blogbookmark',
-                    'add_blogauthorfollow',
-                    'view_blogauthorfollow',
                     'add_blogcontentreport',
                     'view_blogcontentreport',
                 ]
