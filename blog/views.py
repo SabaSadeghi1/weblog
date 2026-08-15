@@ -1,10 +1,19 @@
 from django.db.models import Prefetch, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import BlogPost, BlogCategory
-from media.models import BlogPostMedia
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from .forms import BlogPostForm
 from media.models import MediaAsset, BlogPostMedia
+from django.core.paginator import Paginator
+from django.utils import timezone
+from analytics.services import add_view
+from django.http import Http404
+from blog.models import BlogSlugRedirect
+from django.http import Http404, HttpResponseGone
+from seo.models import GoneURL
+from core.models import SiteSettings
+
+
 
 
 def post_list(request):
@@ -16,7 +25,10 @@ def post_list(request):
 
 
     posts = (
-        BlogPost.objects.filter(status="published")
+        BlogPost.objects.filter(
+            status="published",
+            published_at__lte=timezone.now()
+        )
         .select_related("author_user", "category")
         .prefetch_related(
             Prefetch(
@@ -33,7 +45,70 @@ def post_list(request):
 
     category_slug = request.GET.get("category", "")
 
+    tag_slug = request.GET.get(
+        'tag',
+        ''
+    )
 
+    author = request.GET.get(
+        'author',
+        ''
+    )
+
+    date_from = request.GET.get(
+        'date_from',
+        ''
+    )
+
+    date_to = request.GET.get(
+        'date_to',
+        ''
+    )
+
+    ordering = request.GET.get(
+        'ordering',
+        'newest'
+    )
+
+    if tag_slug:
+
+        posts = posts.filter(
+            tags__slug=tag_slug
+        )
+
+
+    if author:
+
+        posts = posts.filter(
+            author_user__username=author
+        )
+
+
+    if date_from:
+
+        posts = posts.filter(
+            published_at__date__gte=date_from
+        )
+
+
+    if date_to:
+
+        posts = posts.filter(
+            published_at__date__lte=date_to
+        )
+
+
+    if ordering == 'oldest':
+
+        posts = posts.order_by(
+            'published_at'
+        )
+
+    else:
+
+        posts = posts.order_by(
+            '-published_at'
+        )
     if q:
 
         posts = posts.filter(
@@ -47,7 +122,7 @@ def post_list(request):
 
         ).distinct()
 
-
+    
     if category_slug:
 
         posts = posts.filter(
@@ -58,16 +133,46 @@ def post_list(request):
     categories = BlogCategory.objects.filter(
         is_active=True
     )
+    site_settings = SiteSettings.objects.filter(
+        singleton_key='global'
+    ).first()
 
 
+    if site_settings:
+
+        posts_per_page = site_settings.posts_per_page
+
+    else:
+
+        posts_per_page = 9
+    paginator = Paginator(
+        posts,
+        posts_per_page
+    )
+
+    page_number = request.GET.get(
+        'page'
+    )
+
+    page_obj = paginator.get_page(
+        page_number
+    )
     context = {
-        "posts": posts,
+        "posts": page_obj,
+        "page_obj": page_obj,
         "categories": categories,
+
         "q": q,
+
         "selected_category": category_slug,
+        "selected_tag": tag_slug,
+        "selected_author": author,
+
+        "date_from": date_from,
+        "date_to": date_to,
+
+        "ordering": ordering,
     }
-
-
     return render(
         request,
         "blog/post_list.html",
@@ -75,6 +180,10 @@ def post_list(request):
     )
 
 @login_required(login_url='login')
+@permission_required(
+    'blog.add_blogpost',
+    raise_exception=True
+)
 def post_create(request):
 
     if request.method == 'POST':
@@ -162,13 +271,97 @@ def post_create(request):
 
 def post_detail(request, slug):
 
-    post = get_object_or_404(
-        BlogPost,
-        slug=slug
+    # 410 Gone
+    gone = GoneURL.objects.filter(
+        path=request.path,
+        is_active=True
+    ).exists()
+
+    if gone:
+        return HttpResponseGone(
+            'This page has been permanently removed.'
+        )
+
+
+    # Current published post
+    try:
+
+        post = BlogPost.objects.get(
+            slug=slug,
+            status='published',
+            published_at__lte=timezone.now()
+        )
+
+    except BlogPost.DoesNotExist:
+
+        # Old slug -> 301
+        old_slug = (
+            BlogSlugRedirect.objects
+            .select_related('post')
+            .filter(
+                old_slug=slug,
+                post__status='published',
+                post__published_at__lte=timezone.now()
+            )
+            .first()
+        )
+
+        if old_slug:
+
+            return redirect(
+                old_slug.post.get_absolute_url(),
+                permanent=True
+            )
+
+        raise Http404
+
+
+    cover = BlogPostMedia.objects.filter(
+        post=post,
+        purpose=BlogPostMedia.Purpose.COVER,
+        is_active=True
+    ).select_related(
+        'media_asset'
+    ).first()
+
+
+    view_key = (
+        f'post_view_{post.id}_'
+        f'{timezone.localdate()}'
     )
+
+    if not request.session.get(view_key):
+
+        add_view(post)
+
+        request.session[view_key] = True
+
+
+    post_tags = post.tags.all()
+
+    related_posts = (
+        BlogPost.objects
+        .filter(
+            status='published',
+            published_at__lte=timezone.now()
+        )
+        .exclude(id=post.id)
+        .filter(
+            Q(category=post.category)
+            |
+            Q(tags__in=post_tags)
+        )
+        .distinct()
+        .order_by('-published_at')[:4]
+    )
+
 
     return render(
         request,
-        "blog/post_detail.html",
-        {"post": post}
+        'blog/post_detail.html',
+        {
+            'post': post,
+            'cover': cover,
+            'related_posts': related_posts,
+        }
     )

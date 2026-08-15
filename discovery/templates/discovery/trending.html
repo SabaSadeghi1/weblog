@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+Trending Posts
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Trending Posts</h1>
+
+    {% for post in posts %}
+
+        <article>
+
+            <h2>
+                <a href="{{ post.get_absolute_url }}">
+                    {{ post.title }}
+                </a>
+            </h2>
+
+            <p>
+                {{ post.summary|truncatewords:25 }}
+            </p>
+
+        </article>
+
+    {% empty %}
+
+        <p>No trending posts yet.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
