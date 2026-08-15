@@ -40,6 +40,10 @@ class MediaAssetAdmin(admin.ModelAdmin):
             )
         return "-"
 
+    def has_delete_permission(self, request, obj=None):
+        # Media is soft-deleted via is_active; disable accidental hard delete in admin.
+        return False
+
     @admin.action(description="Activate selected media")
     def activate_media(self, request, queryset):
         queryset.update(is_active=True)

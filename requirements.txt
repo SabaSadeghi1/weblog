@@ -1,5 +1,6 @@
 asgiref==3.12.1
 Django==5.2.16
+django-ckeditor-5==0.2.20
 Faker==40.36.0
 pillow==12.3.0
 psycopg==3.3.4
@@ -8,4 +9,3 @@ python-dotenv==1.2.2
 sqlparse==0.5.5
 typing_extensions==4.16.0
 tzdata==2026.3
-django-ckeditor-5==0.2.20

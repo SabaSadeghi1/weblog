@@ -1,6 +1,6 @@
 from django.db.models import Count, Prefetch, Q
 from django.shortcuts import render
-
+from django.utils import timezone
 from blog.models import BlogCategory, BlogPost
 from media.models import BlogPostMedia
 
@@ -12,7 +12,10 @@ def landing_page(request):
     ).select_related("media_asset")
 
     published_posts = (
-        BlogPost.objects.filter(status="published")
+        BlogPost.objects.filter(
+            status="published",
+            published_at__lte=timezone.now()
+        )
         .select_related("author_user", "category")
         .prefetch_related(
             Prefetch(
@@ -43,7 +46,10 @@ def landing_page(request):
         .annotate(
             published_post_count=Count(
                 "posts",
-                filter=Q(posts__status="published"),
+                filter=Q(
+                posts__status="published",
+                posts__published_at__lte=timezone.now()
+            )
             )
         )
         .filter(published_post_count__gt=0)

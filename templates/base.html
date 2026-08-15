@@ -8,10 +8,21 @@
 
     {% block seo_meta %}
 
-        <meta
-            name="description"
-            content="Share posts, ideas, photos, videos, and conversations."
-        >
+        {% if site_settings and site_settings.default_seo_description %}
+
+            <meta
+                name="description"
+                content="{{ site_settings.default_seo_description|striptags|truncatechars:160 }}"
+            >
+
+        {% else %}
+
+            <meta
+                name="description"
+                content="Share posts, ideas, photos, videos, and conversations."
+            >
+
+        {% endif %}
 
         <meta
             name="robots"
@@ -21,7 +32,19 @@
     {% endblock %}
 
     <title>
-        {% block title %}Comentic — Share what matters{% endblock %}
+        {% block title %}
+
+            {% if site_settings and site_settings.default_seo_title %}
+
+                {{ site_settings.default_seo_title }}
+
+            {% else %}
+
+                Comentic — Share what matters
+
+            {% endif %}
+
+        {% endblock %}
     </title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,7 +74,19 @@
                     <span></span>
                 </span>
 
-                <span>Comentic</span>
+                <span>
+
+                    {% if site_settings %}
+
+                        {{ site_settings.site_name }}
+
+                    {% else %}
+
+                        Comentic
+
+                    {% endif %}
+
+                </span>
             </a>
 
             <nav class="main-navigation" aria-label="Main navigation">
@@ -108,7 +143,19 @@
                         <span></span>
                     </span>
 
-                    <span>Comentic</span>
+                    <span>
+
+                        {% if site_settings %}
+
+                            {{ site_settings.site_name }}
+
+                        {% else %}
+
+                            Comentic
+
+                        {% endif %}
+
+                    </span>
                 </a>
 
                 <p>
@@ -139,3 +186,4 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+

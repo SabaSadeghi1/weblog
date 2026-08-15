@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Feed
+{% endblock %}
+
+{% block seo_meta %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>My Feed</h1>
+
+    {% for post in posts %}
+
+        <article>
+
+            <h2>
+                <a href="{{ post.get_absolute_url }}">
+                    {{ post.title }}
+                </a>
+            </h2>
+
+            <p>
+                {{ post.summary|truncatewords:25 }}
+            </p>
+
+        </article>
+
+    {% empty %}
+
+        <p>No posts in your feed yet.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
