@@ -86,7 +86,7 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/post_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/post_detail.css' %}?v=3">
 {% endblock %}
 
 {% block content %}
@@ -142,11 +142,15 @@
         {% endif %}
 
         <div class="post-content-wrap">
+
             <div class="post-content ck-content">
                 {{ post.content|safe }}
             </div>
 
-            {% if content_media %}
+        </div>
+
+
+        {% if content_media %}
                 <section class="post-media-section">
                     {% for item in content_media %}
                         {% with asset=item.media_asset %}
@@ -417,8 +421,7 @@
                     <a href="{% url 'core:landing' %}#topics" class="post-cta-secondary">Browse topics</a>
                 </div>
             </section>
-        </div>
-    </div>
+      </div>
 </section>
 
 {% if related_posts %}
