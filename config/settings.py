@@ -188,3 +188,7 @@ CKEDITOR_5_CONFIGS = {
 EMAIL_BACKEND = (
     'django.core.mail.backends.console.EmailBackend'
 )
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/profile/"
+LOGOUT_REDIRECT_URL = "/"

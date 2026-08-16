@@ -1,70 +1,38 @@
 {% extends "base.html" %}
-
-{% block title %}
-{{ profile.display_name|default:author.username }}
-{% endblock %}
-
+{% block title %}{{ profile.display_name|default:author.username }}{% endblock %}
 {% block seo_meta %}
-
-<meta
-    name="description"
-    content="{{ profile.bio|striptags|truncatechars:160 }}"
->
-
+<meta name="description" content="{{ profile.bio|striptags|truncatechars:160 }}">
 <meta name="robots" content="index, follow">
-
-<link
-    rel="canonical"
-    href="{{ request.scheme }}://{{ request.get_host }}{% url 'author_profile' username=author.username %}"
->
-
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'author_profile' username=author.username %}">
 {% endblock %}
-
 {% block content %}
+<section class="account-page">
+    <div class="container account-layout">
+        <div class="profile-hero">
+            {% if profile.avatar %}
+                <img class="profile-avatar-large" src="{{ profile.avatar.url }}" alt="{{ profile.display_name|default:author.username }}">
+            {% else %}
+                <div class="profile-avatar-fallback">{{ author.username|first|upper }}</div>
+            {% endif %}
+            <div>
+                <span class="page-eyebrow">Community author</span>
+                <h1>{{ profile.display_name|default:author.username }}</h1>
+                <p>{{ profile.bio|striptags|default:"Sharing ideas and perspectives on Comentic." }}</p>
+                {% if profile.website %}<div class="profile-meta"><a href="{{ profile.website }}">Website ↗</a></div>{% endif %}
+            </div>
+            <a class="profile-action" href="{% url 'blog:post_list' %}?author={{ author.username|urlencode }}">Browse Posts</a>
+        </div>
 
-<div class="container">
-
-    {% if profile.avatar %}
-        <img
-            src="{{ profile.avatar.url }}"
-            alt="{{ profile.display_name|default:author.username }}"
-            width="150"
-        >
-    {% endif %}
-
-    <h1>
-        {{ profile.display_name|default:author.username }}
-    </h1>
-
-    <div>
-        {{ profile.bio|safe }}
+        <section class="content-panel">
+            <h2>Published stories</h2>
+            <div class="mini-post-list">
+                {% for post in posts %}
+                    <a class="mini-post-card" href="{{ post.get_absolute_url }}"><div><h3>{{ post.title }}</h3><p>{{ post.summary|truncatewords:24 }}</p></div><span class="mini-arrow">↗</span></a>
+                {% empty %}
+                    <div class="empty-state">No published posts yet.</div>
+                {% endfor %}
+            </div>
+        </section>
     </div>
-
-
-    <h2>Posts</h2>
-
-    {% for post in posts %}
-
-        <article>
-
-            <h3>
-                <a href="{{ post.get_absolute_url }}">
-                    {{ post.title }}
-                </a>
-            </h3>
-
-            <p>
-                {{ post.summary }}
-            </p>
-
-        </article>
-
-    {% empty %}
-
-        <p>No published posts yet.</p>
-
-    {% endfor %}
-
-</div>
-
+</section>
 {% endblock %}
