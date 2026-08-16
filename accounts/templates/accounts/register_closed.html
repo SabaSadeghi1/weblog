@@ -1,11 +1,13 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% block title %}Registration Closed{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/register.css' %}">{% endblock %}
 {% block content %}
-
-<div class="container">
-
-    <h1>Registration is currently closed.</h1>
-
-</div>
-
+<section class="register-page">
+    <div class="register-card register-message-card">
+        <div class="register-brand"><img src="{% static 'images/comentic-logo.png' %}" alt=""></div>
+        <div class="register-header"><span>Registration update</span><h1>Doors are closed for now.</h1><p>Registration is currently closed. Explore public conversations in the meantime.</p></div>
+        <a class="register-btn register-btn--link" href="{% url 'blog:post_list' %}">Explore posts <span>→</span></a>
+    </div>
+</section>
 {% endblock %}

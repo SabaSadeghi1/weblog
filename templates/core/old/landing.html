@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Comentic — Share what matters
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+
+    <section class="hero">
+        <div class="container hero-layout">
+
+            <div class="hero-copy">
+                <div class="eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    Share. Connect. Be heard.
+                </div>
+
+                <h1>
+                    Say what’s on
+                    <em>your mind.</em>
+                </h1>
+
+                <p class="hero-description">
+                    Create posts, share photos and videos, and join
+                    conversations with people who care about the same
+                    things you do.
+                </p>
+
+                <div class="hero-actions">
+                    <a
+                        class="button button--primary"
+                        href="#latest-posts"
+                    >
+                        Explore posts
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M5 12h14M13 6l6 6-6 6"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </a>
+
+                    <a class="button button--ghost" href="#topics">
+                        Browse topics
+                    </a>
+                </div>
+
+                <form
+                    class="hero-search"
+                    action="{% url 'blog:post_list' %}"
+                    method="get"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="7"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        />
+
+                        <path
+                            d="m16.5 16.5 4 4"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+
+                    <input
+                        type="search"
+                        name="q"
+                        placeholder="Search posts, people, and topics..."
+                        aria-label="Search posts"
+                    >
+
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
+            <div class="featured-area">
+                {% if featured_post %}
+                    <a
+                        class="featured-story"
+                        href="/posts/{{ featured_post.slug }}/"
+                    >
+                        <div class="featured-media">
+                            {% if featured_post.active_covers %}
+                                <img
+                                    src="{{ featured_post.active_covers.0.media_asset.file.url }}"
+                                    alt="{{ featured_post.active_covers.0.alt_text|default:featured_post.title }}"
+                                >
+                            {% else %}
+                                <div class="editorial-placeholder">
+                                    <span>Trending</span>
+
+                                    <svg
+                                        viewBox="0 0 400 300"
+                                        aria-hidden="true"
+                                    >
+                                        <circle
+                                            cx="300"
+                                            cy="70"
+                                            r="78"
+                                        ></circle>
+
+                                        <rect
+                                            x="44"
+                                            y="155"
+                                            width="210"
+                                            height="24"
+                                            rx="12"
+                                        ></rect>
+
+                                        <rect
+                                            x="44"
+                                            y="195"
+                                            width="285"
+                                            height="13"
+                                            rx="7"
+                                        ></rect>
+
+                                        <rect
+                                            x="44"
+                                            y="222"
+                                            width="238"
+                                            height="13"
+                                            rx="7"
+                                        ></rect>
+                                    </svg>
+                                </div>
+                            {% endif %}
+
+                            <span class="featured-label">
+                                Trending post
+                            </span>
+                        </div>
+
+                        <div class="featured-content">
+                            <div class="article-meta">
+                                {% if featured_post.category %}
+                                    <span>
+                                        {{ featured_post.category.name }}
+                                    </span>
+                                {% else %}
+                                    <span>Community</span>
+                                {% endif %}
+
+                                <span>
+                                    {% if featured_post.published_at %}
+                                        {{ featured_post.published_at|date:"M d, Y" }}
+                                    {% else %}
+                                        {{ featured_post.created_at|date:"M d, Y" }}
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <h2>{{ featured_post.title }}</h2>
+
+                            <p>
+                                {% if featured_post.summary %}
+                                    {{ featured_post.summary|truncatewords:25 }}
+                                {% else %}
+                                    {{ featured_post.content|striptags|truncatewords:25 }}
+                                {% endif %}
+                            </p>
+
+                            <div class="featured-author">
+                                <span class="author-avatar">
+                                    {{ featured_post.author_user.username|first|upper }}
+                                </span>
+
+                                <div>
+                                    <strong>
+                                        {{ featured_post.author_user.username }}
+                                    </strong>
+
+                                    <small>Community member</small>
+                                </div>
+
+                                <span class="read-arrow">↗</span>
+                            </div>
+                        </div>
+                    </a>
+                {% else %}
+                    <div class="featured-story featured-story--empty">
+                        <div class="featured-media">
+                            <div class="editorial-placeholder">
+                                <span>Coming soon</span>
+
+                                <svg
+                                    viewBox="0 0 400 300"
+                                    aria-hidden="true"
+                                >
+                                    <circle
+                                        cx="300"
+                                        cy="70"
+                                        r="78"
+                                    ></circle>
+
+                                    <rect
+                                        x="44"
+                                        y="155"
+                                        width="210"
+                                        height="24"
+                                        rx="12"
+                                    ></rect>
+
+                                    <rect
+                                        x="44"
+                                        y="195"
+                                        width="285"
+                                        height="13"
+                                        rx="7"
+                                    ></rect>
+
+                                    <rect
+                                        x="44"
+                                        y="222"
+                                        width="238"
+                                        height="13"
+                                        rx="7"
+                                    ></rect>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="featured-content">
+                            <div class="article-meta">
+                                <span>Start a conversation</span>
+                            </div>
+
+                            <h2>
+                                The first conversation starts here.
+                            </h2>
+
+                            <p>
+                                New posts, ideas, images, and videos
+                                will appear here soon.
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </section>
+
+    <section class="topics-section" id="topics">
+        <div class="container">
+
+            <div class="section-intro">
+                <div>
+                    <span class="section-kicker">
+                        Find your community
+                    </span>
+
+                    <h2>Explore topics.</h2>
+                </div>
+
+                <p>
+                    Discover conversations about technology, creativity,
+                    culture, everyday life, and everything in between.
+                </p>
+            </div>
+
+            <div class="topic-grid">
+                {% for category in categories %}
+                    <a
+                        class="topic-card"
+                        href="/posts/?category={{ category.slug }}"
+                    >
+                        <span class="topic-number">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </span>
+
+                        <div>
+                            <h3>{{ category.name }}</h3>
+
+                            <p>
+                                {{ category.published_post_count }}
+
+                                {% if category.published_post_count == 1 %}
+                                    post
+                                {% else %}
+                                    posts
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <span class="topic-arrow">↗</span>
+                    </a>
+                {% empty %}
+                    <div class="topic-card topic-card--static">
+                        <span class="topic-number">01</span>
+
+                        <div>
+                            <h3>Technology</h3>
+                            <p>Ideas shaping tomorrow</p>
+                        </div>
+                    </div>
+
+                    <div class="topic-card topic-card--static">
+                        <span class="topic-number">02</span>
+
+                        <div>
+                            <h3>Creativity</h3>
+                            <p>Share what inspires you</p>
+                        </div>
+                    </div>
+
+                    <div class="topic-card topic-card--static">
+                        <span class="topic-number">03</span>
+
+                        <div>
+                            <h3>Daily Life</h3>
+                            <p>Real moments and experiences</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </section>
+
+    <section class="stories-section" id="latest-posts">
+        <div class="container">
+
+            <div class="section-intro section-intro--stories">
+                <div>
+                    <span class="section-kicker">
+                        Recently shared
+                    </span>
+
+                    <h2>Latest conversations.</h2>
+                </div>
+
+                <a class="text-link" href="/posts/">
+                    View all posts
+                    <span>→</span>
+                </a>
+            </div>
+
+            <div class="stories-grid">
+                {% for post in latest_posts %}
+                    <article class="story-card">
+                        <a
+                            class="story-card-link"
+                            href="/posts/{{ post.slug }}/"
+                        >
+                            <div class="story-media">
+                                {% if post.active_covers %}
+                                    <img
+                                        src="{{ post.active_covers.0.media_asset.file.url }}"
+                                        alt="{{ post.active_covers.0.alt_text|default:post.title }}"
+                                    >
+                                {% else %}
+                                    <div class="story-placeholder">
+                                        <span>
+                                            {{ forloop.counter|stringformat:"02d" }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+
+                                {% if post.category %}
+                                    <span class="story-category">
+                                        {{ post.category.name }}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="story-content">
+                                <div class="article-meta">
+                                    <span>
+                                        By {{ post.author_user.username }}
+                                    </span>
+
+                                    <span>
+                                        {% if post.published_at %}
+                                            {{ post.published_at|date:"M d, Y" }}
+                                        {% else %}
+                                            {{ post.created_at|date:"M d, Y" }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                <h3>{{ post.title }}</h3>
+
+                                <p>
+                                    {% if post.summary %}
+                                        {{ post.summary|truncatewords:19 }}
+                                    {% else %}
+                                        {{ post.content|striptags|truncatewords:19 }}
+                                    {% endif %}
+                                </p>
+
+                                <div class="story-read">
+                                    View post
+                                    <span>↗</span>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                {% empty %}
+                    <div class="stories-empty">
+                        <span>✦</span>
+
+                        <h3>No posts yet.</h3>
+
+                        <p>
+                            New conversations, images, and videos
+                            will appear here soon.
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </section>
+
+    <section class="closing-section">
+        <div class="container">
+            <div class="closing-card">
+                <div class="closing-shape closing-shape--one"></div>
+                <div class="closing-shape closing-shape--two"></div>
+
+                <span class="section-kicker">
+                    Join the conversation
+                </span>
+
+                <h2>
+                    Discover something new.
+                    <em>Share something real.</em>
+                </h2>
+
+                <p>
+                    Explore posts from the community and connect
+                    through meaningful conversations.
+                </p>
+
+                <a class="button button--light" href="/posts/">
+                    Explore all posts
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ profile.display_name|default:author.username }}
+{% endblock %}
+
+{% block seo_meta %}
+
+<meta
+    name="description"
+    content="{{ profile.bio|striptags|truncatechars:160 }}"
+>
+
+<meta name="robots" content="index, follow">
+
+<link
+    rel="canonical"
+    href="{{ request.scheme }}://{{ request.get_host }}{% url 'author_profile' username=author.username %}"
+>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    {% if profile.avatar %}
+        <img
+            src="{{ profile.avatar.url }}"
+            alt="{{ profile.display_name|default:author.username }}"
+            width="150"
+        >
+    {% endif %}
+
+    <h1>
+        {{ profile.display_name|default:author.username }}
+    </h1>
+
+    <div>
+        {{ profile.bio|safe }}
+    </div>
+
+
+    <h2>Posts</h2>
+
+    {% for post in posts %}
+
+        <article>
+
+            <h3>
+                <a href="{{ post.get_absolute_url }}">
+                    {{ post.title }}
+                </a>
+            </h3>
+
+            <p>
+                {{ post.summary }}
+            </p>
+
+        </article>
+
+    {% empty %}
+
+        <p>No published posts yet.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

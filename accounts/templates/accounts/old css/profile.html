@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block seo_meta %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>
+        {% if profile.display_name %}
+            {{ profile.display_name }}
+        {% else %}
+            {{ request.user.username }}
+        {% endif %}
+    </h1>
+
+    {% if profile.avatar %}
+        <img
+            src="{{ profile.avatar.url }}"
+            alt="{{ request.user.username }}"
+            width="150"
+        >
+    {% endif %}
+
+    <div>
+        {{ profile.bio|safe }}
+    </div>
+
+    <p>{{ request.user.email }}</p>
+
+    {% if profile.website %}
+        <a href="{{ profile.website }}">
+            Website
+        </a>
+    {% endif %}
+
+    <br>
+
+    <a href="{% url 'profile_update' %}">
+        Edit Profile
+    </a>
+
+    <h2>My Posts</h2>
+
+    {% for post in posts %}
+
+        <p>
+            {{ post.title }}
+            -
+            {{ post.get_status_display }}
+        </p>
+
+    {% empty %}
+
+        <p>No posts yet.</p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Comentic Administration{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/admin_comentic.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div class="comentic-admin-branding">
+    <a href="{% url 'admin:index' %}" class="comentic-admin-brand-link">
+        <img src="{% static 'images/comentic-logo.png' %}" alt="Comentic" class="comentic-admin-logo">
+    </a>
+    <span class="comentic-admin-divider"></span>
+    <span class="comentic-admin-title">Administration</span>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<a href="{% url 'core:landing' %}" class="comentic-view-site">View Comentic ↗</a>
+{% endblock %}
