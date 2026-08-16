@@ -119,3 +119,9 @@ class BlogPostUpdateForm(forms.ModelForm):
             "seo_title",
             "seo_description",
         ]
+class SchedulePostForm(forms.Form):
+    scheduled_for = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            attrs={"type":"datetime-local"}
+        )
+    )

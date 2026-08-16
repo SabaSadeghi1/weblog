@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.http import Http404, HttpResponseGone
 
 from .models import BlogPost, BlogCategory
-from .forms import BlogPostForm, BlogPostUpdateForm
+from .forms import BlogPostForm, BlogPostUpdateForm, SchedulePostForm
 from .services import publish_due_posts
 
 from media.models import MediaAsset, BlogPostMedia
@@ -231,7 +231,27 @@ def post_update(request,id):
             "post":post,
         }
     )
+@login_required(login_url="login")
+def editor_posts(request):
 
+    if not request.user.is_superuser and not request.user.groups.filter(name="Editor").exists():
+        return redirect("blog:post_list")
+
+    posts = BlogPost.objects.filter(
+        status__in=[
+            "pending_review",
+            "approved",
+            "scheduled",
+            "published",
+            "rejected",
+        ]
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "blog/editor_posts.html",
+        {"posts":posts}
+    )
 def post_detail(request, slug):
     publish_due_posts()
 
@@ -379,4 +399,56 @@ def post_detail(request, slug):
             "report_reasons": BlogContentReport.Reason.choices,
             "related_posts": related_posts,
         },
+    )
+@login_required(login_url="login")
+def post_review(request,id):
+
+    if not request.user.is_superuser and not request.user.groups.filter(name="Editor").exists():
+        return redirect("blog:post_list")
+
+    post = get_object_or_404(
+        BlogPost,
+        id=id
+    )
+
+    schedule_form = SchedulePostForm()
+
+    if request.method == "POST":
+
+        action = request.POST.get("action")
+
+        if action == "approve" and post.status == "pending_review":
+            post.status = "approved"
+            post.save()
+
+        elif action == "reject" and post.status == "pending_review":
+            post.status = "rejected"
+            post.save()
+
+        elif action == "publish" and post.status == "approved":
+            post.status = "published"
+            post.save()
+
+        elif action == "schedule" and post.status == "approved":
+
+            schedule_form = SchedulePostForm(request.POST)
+
+            if schedule_form.is_valid():
+                post.status = "scheduled"
+                post.scheduled_for = schedule_form.cleaned_data["scheduled_for"]
+                post.save()
+
+        elif action == "archive" and post.status == "published":
+            post.status = "archived"
+            post.save()
+
+        return redirect("blog:editor_posts")
+
+    return render(
+        request,
+        "blog/post_review.html",
+        {
+            "post":post,
+            "schedule_form":schedule_form,
+        }
     )
