@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,124 +6,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     {% block seo_meta %}
-
         {% if site_settings and site_settings.default_seo_description %}
-
-            <meta
-                name="description"
-                content="{{ site_settings.default_seo_description|striptags|truncatechars:160 }}"
-            >
-
+            <meta name="description" content="{{ site_settings.default_seo_description|striptags|truncatechars:160 }}">
         {% else %}
-
-            <meta
-                name="description"
-                content="Share posts, ideas, photos, videos, and conversations."
-            >
-
+            <meta name="description" content="Share posts, ideas, photos, videos, and conversations.">
         {% endif %}
-
-        <meta
-            name="robots"
-            content="index, follow"
-        >
-
+        <meta name="robots" content="index, follow">
     {% endblock %}
 
     <title>
         {% block title %}
-
             {% if site_settings and site_settings.default_seo_title %}
-
                 {{ site_settings.default_seo_title }}
-
             {% else %}
-
                 Comentic — Share what matters
-
             {% endif %}
-
         {% endblock %}
     </title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&display=swap"
-        rel="stylesheet"
-    >
-
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-
     {% block extra_css %}{% endblock %}
 </head>
-
 <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="site-header">
         <div class="container navbar">
-            <a
-                class="brand"
-                href="{% url 'core:landing' %}"
-                aria-label="Comentic home"
-            >
-                <span class="brand-mark">
-                    <span></span>
-                </span>
-
-                <span>
-
-                    {% if site_settings %}
-
-                        {{ site_settings.site_name }}
-
-                    {% else %}
-
-                        Comentic
-
-                    {% endif %}
-
-                </span>
+            <a class="brand" href="{% url 'core:landing' %}" aria-label="Comentic home">
+                <img src="{% static 'images/comentic-logo.png' %}" alt="Comentic" class="brand-logo">
             </a>
 
             <nav class="main-navigation" aria-label="Main navigation">
-                <a href="{% url 'core:landing' %}">Home</a>
-                <a href="{% url 'blog:post_list' %}">Posts</a>
-                <a href="{% url 'core:landing' %}#topics">Topics</a>
-                <a href="{% url 'core:landing' %}#about">About</a>
-                {% if request.user.is_authenticated %}
-
-                <a href="{% url 'blog:post_create' %}">
-                    Create Post
-                </a>
-
-                <form
-                    method="post"
-                    action="{% url 'logout' %}"
-                >
-
-                    {% csrf_token %}
-
-                    <button type="submit">
-                        Logout
-                    </button>
-
-                </form>
-
-            {% else %}
-
-                <a href="{% url 'login' %}">
-                    Login
-                </a>
-
-                <a href="{% url 'register' %}">
-                    Register
-                </a>
-
-{% endif %}
+                <a href="{% url 'core:landing' %}" class="nav-link">Home</a>
+                <a href="{% url 'blog:post_list' %}" class="nav-link">Posts</a>
+                <a href="{% url 'discovery:trending' %}" class="nav-link">Trending</a>
+                <a href="{% url 'core:landing' %}#topics" class="nav-link">Topics</a>
+                <a href="{% url 'core:landing' %}#about" class="nav-link">About</a>
             </nav>
+
+            <div class="nav-actions">
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="profile-pill" aria-label="Open profile">
+                        <span class="profile-avatar">{{ request.user.username|first|upper }}</span>
+                        <span class="profile-name">Profile</span>
+                    </a>
+
+                    <a href="{% url 'blog:post_create' %}" class="nav-create">
+                        <span class="nav-create-plus">+</span>
+                        <span>Create Post</span>
+                    </a>
+
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-logout">
+                            <span>Logout</span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 8l4 4-4 4M18 12H9M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-login">Login</a>
+                    <a href="{% url 'register' %}" class="nav-create">Join Comentic</a>
+                {% endif %}
+            </div>
         </div>
     </header>
 
@@ -133,57 +81,43 @@
     </main>
 
     <footer class="site-footer" id="about">
+        <div class="footer-glow footer-glow--one"></div>
+        <div class="footer-glow footer-glow--two"></div>
+
         <div class="container footer-grid">
             <div class="footer-brand">
-                <a
-                    class="brand brand--footer"
-                    href="{% url 'core:landing' %}"
-                >
-                    <span class="brand-mark">
-                        <span></span>
-                    </span>
-
-                    <span>
-
-                        {% if site_settings %}
-
-                            {{ site_settings.site_name }}
-
-                        {% else %}
-
-                            Comentic
-
-                        {% endif %}
-
-                    </span>
+                <a class="brand brand--footer" href="{% url 'core:landing' %}">
+                    <img src="{% static 'images/comentic-logo.png' %}" alt="Comentic" class="brand-logo brand-logo--footer">
                 </a>
-
-                <p>
-                    A community for sharing ideas, photos, videos,
-                    and meaningful conversations.
-                </p>
+                <p>A modern community for thoughtful ideas, beautiful stories, and conversations that actually matter.</p>
             </div>
 
             <div class="footer-column">
                 <span>Explore</span>
-                <a href="/posts/">Posts</a>
+                <a href="{% url 'blog:post_list' %}">Posts</a>
+                <a href="{% url 'discovery:trending' %}">Trending</a>
                 <a href="{% url 'core:landing' %}#topics">Topics</a>
             </div>
 
             <div class="footer-column">
                 <span>Community</span>
                 <a href="{% url 'core:landing' %}#about">About</a>
-                <a href="/admin/">Create a post</a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'blog:post_create' %}">Create a post</a>
+                    <a href="{% url 'profile' %}">Profile</a>
+                {% else %}
+                    <a href="{% url 'register' %}">Join Comentic</a>
+                    <a href="{% url 'login' %}">Login</a>
+                {% endif %}
             </div>
         </div>
 
         <div class="container footer-bottom">
             <p>© {% now "Y" %} Comentic. All rights reserved.</p>
-            <p>Share ideas. Start conversations.</p>
+            <p>Share boldly. Connect meaningfully.</p>
         </div>
     </footer>
 
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-

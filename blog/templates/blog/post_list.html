@@ -1,312 +1,108 @@
 {% extends "base.html" %}
 {% load static %}
 
-
-{% block title %}
-Posts
-{% endblock %}
+{% block title %}Posts{% endblock %}
 
 {% block seo_meta %}
-
-<meta
-    name="description"
-    content="Discover the latest posts and conversations."
->
-
-
-{% if q %}
-
-    <meta
-        name="robots"
-        content="noindex, follow"
-    >
-
-{% else %}
-
-    <meta
-        name="robots"
-        content="index, follow"
-    >
-
-{% endif %}
-
-
-<link
-    rel="canonical"
-    href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog:post_list' %}"
->
-
+<meta name="description" content="Discover the latest posts and conversations.">
+{% if q %}<meta name="robots" content="noindex, follow">{% else %}<meta name="robots" content="index, follow">{% endif %}
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog:post_list' %}">
 {% endblock %}
-
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/post_list.css' %}?v=10">
+<link rel="stylesheet" href="{% static 'css/post_list.css' %}">
 {% endblock %}
-
 
 {% block content %}
-
-<div class="posts-page">
-
-<div class="posts-header">
-
-    <h1>Latest Posts</h1>
-
-    <p>
-        Discover our latest posts and stories
-    </p>
-
-
-    {% if request.user.is_authenticated %}
-
-        <a
-            href="{% url 'blog:post_create' %}"
-            class="create-post-btn"
-        >
-            + Create Post
-        </a>
-
-    {% else %}
-
-        <a
-            href="{% url 'login' %}"
-            class="create-post-btn"
-        >
-            Login to create a post
-        </a>
-
-    {% endif %}
-
-</div>
-
-    <div class="posts-tools">
-
-                <form method="get" class="posts-search">
-
-                    <input
-                        type="search"
-                        name="q"
-                        value="{{ q }}"
-                        placeholder="Search posts..."
-                    >
-
-                    {% if selected_category %}
-
-                        <input
-                            type="hidden"
-                            name="category"
-                            value="{{ selected_category }}"
-                        >
-
-                    {% endif %}
-
-                    <button type="submit">
-                        Search
-                    </button>
-
-                </form>
-                 
-                <form method="get" class="advanced-filter">
-
-                    <input
-                        type="search"
-                        name="q"
-                        value="{{ q }}"
-                        placeholder="Search posts..."
-                    >
-
-
-                    <input
-                        type="text"
-                        name="tag"
-                        value="{{ selected_tag }}"
-                        placeholder="Tag"
-                    >
-
-
-                    <input
-                        type="text"
-                        name="author"
-                        value="{{ selected_author }}"
-                        placeholder="Author username"
-                    >
-
-
-                    <input
-                        type="date"
-                        name="date_from"
-                        value="{{ date_from }}"
-                    >
-
-
-                    <input
-                        type="date"
-                        name="date_to"
-                        value="{{ date_to }}"
-                    >
-
-
-                    <select name="ordering">
-
-                        <option
-                            value="newest"
-                            {% if ordering == "newest" %}selected{% endif %}
-                        >
-                            Newest
-                        </option>
-
-                        <option
-                            value="oldest"
-                            {% if ordering == "oldest" %}selected{% endif %}
-                        >
-                            Oldest
-                        </option>
-
-                    </select>
-
-
-                    {% if selected_category %}
-
-                        <input
-                            type="hidden"
-                            name="category"
-                            value="{{ selected_category }}"
-                        >
-
-                    {% endif %}
-
-
-                    <button type="submit">
-                        Apply Filters
-                    </button>
-
-                </form>
-
-                <div class="category-filter">
-
-                    <a
-                        href="{% url 'blog:post_list' %}"
-                        class="{% if not selected_category %}active{% endif %}"
-                    >
-                        All
-                    </a>
-
-
-                    {% for category in categories %}
-
-                        <a
-                            href="?category={{ category.slug }}"
-                            class="{% if selected_category == category.slug %}active{% endif %}"
-                        >
-                            {{ category.name }}
-                        </a>
-
-                    {% endfor %}
-
-                </div>
-
+<section class="posts-page">
+    <div class="container posts-shell">
+        <header class="posts-hero">
+            <div>
+                <span class="posts-kicker">Discover the community</span>
+                <h1>Stories worth <em>opening.</em></h1>
+                <p>Fresh ideas, thoughtful perspectives, and conversations from across Comentic.</p>
             </div>
 
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'blog:post_create' %}" class="create-post-btn"><span>+</span> Create Post</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="create-post-btn">Login to create</a>
+            {% endif %}
+        </header>
 
-    <div class="posts-grid">
+        <section class="posts-tools">
+            <form method="get" class="posts-search">
+                <span class="search-icon">⌕</span>
+                <input type="search" name="q" value="{{ q }}" placeholder="Search posts, topics, authors...">
+                {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                <button type="submit">Search</button>
+            </form>
 
-        {% for post in posts %}
+            <details class="filter-panel">
+                <summary>Advanced filters <span>＋</span></summary>
+                <form method="get" class="advanced-filter">
+                    <input type="search" name="q" value="{{ q }}" placeholder="Search posts...">
+                    <input type="text" name="tag" value="{{ selected_tag }}" placeholder="Tag">
+                    <input type="text" name="author" value="{{ selected_author }}" placeholder="Author username">
+                    <input type="date" name="date_from" value="{{ date_from }}">
+                    <input type="date" name="date_to" value="{{ date_to }}">
+                    <select name="ordering">
+                        <option value="newest" {% if ordering == "newest" %}selected{% endif %}>Newest</option>
+                        <option value="oldest" {% if ordering == "oldest" %}selected{% endif %}>Oldest</option>
+                    </select>
+                    {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                    <button type="submit">Apply Filters</button>
+                </form>
+            </details>
 
-            <div class="post-card">
+            <div class="category-filter">
+                <a href="{% url 'blog:post_list' %}" class="{% if not selected_category %}active{% endif %}">All</a>
+                {% for category in categories %}
+                    <a href="?category={{ category.slug }}" class="{% if selected_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+                {% endfor %}
+            </div>
+        </section>
 
-                <div class="post-image">
-
-                    {% if post.active_covers %}
-
-                        <img
-                            src="{{ post.active_covers.0.media_asset.file.url }}"
-                            alt="{{ post.active_covers.0.alt_text|default:post.title }}"
-                        >
-
-                    {% else %}
-
-                        <div class="post-image-placeholder">
-                            No Image
+        <div class="posts-grid">
+            {% for post in posts %}
+                <article class="post-card">
+                    <a class="post-card-link" href="{{ post.get_absolute_url }}">
+                        <div class="post-image">
+                            {% if post.active_covers %}
+                                <img src="{{ post.active_covers.0.media_asset.file.url }}" alt="{{ post.active_covers.0.alt_text|default:post.title }}">
+                            {% else %}
+                                <div class="post-image-placeholder"><span>{{ forloop.counter|stringformat:"02d" }}</span></div>
+                            {% endif %}
+                            {% if post.category %}<span class="category-badge">{{ post.category.name }}</span>{% endif %}
                         </div>
 
-                    {% endif %}
+                        <div class="post-body">
+                            <div class="post-meta-line">
+                                <span>{{ post.published_at|date:"M d, Y" }}</span>
+                                <span>Comentic story</span>
+                            </div>
+                            <h2>{{ post.title }}</h2>
+                            <p class="post-summary">{{ post.summary|truncatewords:24 }}</p>
+                            <div class="post-footer"><span>Read story</span><b>↗</b></div>
+                        </div>
+                    </a>
+                </article>
+            {% empty %}
+                <div class="posts-empty"><span>✦</span><h2>No posts found.</h2><p>Try another search or clear your filters.</p></div>
+            {% endfor %}
+        </div>
 
-
-                    {% if post.category %}
-
-                        <span class="category-badge">
-                            {{ post.category.name }}
-                        </span>
-
-                    {% endif %}
-
-                </div>
-
-                <div class="post-body">
-
-                    <h2>{{ post.title }}</h2>
-
-                    <p class="post-summary">
-                        {{ post.summary }}
-                    </p>
-
-
-                    <div class="post-footer">
-
-                        <span class="post-date">
-                            {{ post.published_at|date:"M d, Y" }}
-                        </span>
-
-                        <a href="{{ post.get_absolute_url }}">
-                            Read More →
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-        {% empty %}
-
-            <p>No posts found.</p>
-
-        {% endfor %}
-
+        {% if page_obj.has_other_pages %}
+            <nav class="pagination" aria-label="Pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?q={{ q|urlencode }}&category={{ selected_category|urlencode }}&tag={{ selected_tag|urlencode }}&author={{ selected_author|urlencode }}&date_from={{ date_from }}&date_to={{ date_to }}&ordering={{ ordering }}&page={{ page_obj.previous_page_number }}">← Previous</a>
+                {% endif %}
+                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="?q={{ q|urlencode }}&category={{ selected_category|urlencode }}&tag={{ selected_tag|urlencode }}&author={{ selected_author|urlencode }}&date_from={{ date_from }}&date_to={{ date_to }}&ordering={{ ordering }}&page={{ page_obj.next_page_number }}">Next →</a>
+                {% endif %}
+            </nav>
+        {% endif %}
     </div>
-
-</div>
-{% if page_obj.has_other_pages %}
-
-<div class="pagination">
-
-    {% if page_obj.has_previous %}
-
-        <a href="?q={{ q|urlencode }}&category={{ selected_category|urlencode }}&tag={{ selected_tag|urlencode }}&author={{ selected_author|urlencode }}&date_from={{ date_from }}&date_to={{ date_to }}&ordering={{ ordering }}&page={{ page_obj.previous_page_number }}">
-            Previous
-        </a>
-
-    {% endif %}
-
-
-    <span>
-        Page {{ page_obj.number }}
-        of {{ page_obj.paginator.num_pages }}
-    </span>
-
-
-    {% if page_obj.has_next %}
-
-        <a href="?q={{ q|urlencode }}&category={{ selected_category|urlencode }}&tag={{ selected_tag|urlencode }}&author={{ selected_author|urlencode }}&date_from={{ date_from }}&date_to={{ date_to }}&ordering={{ ordering }}&page={{ page_obj.next_page_number }}">
-            Next
-        </a>
-
-    {% endif %}
-
-</div>
-
-{% endif %}
-
+</section>
 {% endblock %}
-

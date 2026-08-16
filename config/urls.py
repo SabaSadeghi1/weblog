@@ -18,24 +18,44 @@ sitemaps = {
     "categories": BlogCategorySitemap,
     "authors": AuthorSitemap,
 }
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("posts/", include("blog.urls")),
     path("social/", include("social.urls")),
     path("media-api/", include("media.urls")),
+
     path('register/', accounts_views.user_register, name='register'),
-    path("ckeditor5/",include("django_ckeditor_5.urls")),
-    path('',include('discovery.urls')),
+
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
+    path('', include('discovery.urls')),
     path("", include("core.urls")),
-    path("sitemap.xml",sitemap,{"sitemaps": sitemaps},name="django.contrib.sitemaps.views.sitemap",),
-    path("robots.txt",seo_views.robots_txt,name="robots_txt"),
-    path('login/',accounts_views.user_login,name='login'),
-    path('logout/',accounts_views.user_logout,name='logout'),
-    path('profile/',accounts_views.user_profile,name='profile'),
-    path('profile/edit/',accounts_views.profile_update,name='profile_update'),
-    path('author/<str:username>/',accounts_views.author_profile,name='author_profile'),
-    path('rss/',LatestPostsFeed(),name='rss'),
-    path('accounts/',include('django.contrib.auth.urls')),
+
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
+    path("robots.txt", seo_views.robots_txt, name="robots_txt"),
+
+    # Django auth routes for password reset/change
+    path('accounts/', include('django.contrib.auth.urls')),
+
+    # Our own auth routes
+    path('login/', accounts_views.user_login, name='login'),
+    path('logout/', accounts_views.user_logout, name='logout'),
+    path('profile/', accounts_views.user_profile, name='profile'),
+    path('profile/edit/', accounts_views.profile_update, name='profile_update'),
+
+    path(
+        'author/<str:username>/',
+        accounts_views.author_profile,
+        name='author_profile'
+    ),
+
+    path('rss/', LatestPostsFeed(), name='rss'),
+
 ]
 
 if settings.DEBUG:

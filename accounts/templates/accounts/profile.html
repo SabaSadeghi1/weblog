@@ -1,67 +1,40 @@
 {% extends "base.html" %}
-
-{% block title %}
-My Profile
-{% endblock %}
-
-{% block seo_meta %}
-<meta name="robots" content="noindex, nofollow">
-{% endblock %}
-
+{% block title %}My Profile{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block content %}
+<section class="account-page">
+    <div class="container account-layout">
+        <div class="profile-hero">
+            {% if profile.avatar %}
+                <img class="profile-avatar-large" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}">
+            {% else %}
+                <div class="profile-avatar-fallback">{{ request.user.username|first|upper }}</div>
+            {% endif %}
+            <div>
+                <span class="page-eyebrow">Your space</span>
+                <h1>{% if profile.display_name %}{{ profile.display_name }}{% else %}{{ request.user.username }}{% endif %}</h1>
+                <p>{{ profile.bio|striptags|default:"Your profile is your home inside the Comentic community." }}</p>
+                <div class="profile-meta">
+                    <span>{{ request.user.email }}</span>
+                    {% if profile.website %}<a href="{{ profile.website }}">Website ↗</a>{% endif %}
+                </div>
+            </div>
+            <a class="profile-action" href="{% url 'profile_update' %}">Edit Profile</a>
+        </div>
 
-<div class="container">
-
-    <h1>
-        {% if profile.display_name %}
-            {{ profile.display_name }}
-        {% else %}
-            {{ request.user.username }}
-        {% endif %}
-    </h1>
-
-    {% if profile.avatar %}
-        <img
-            src="{{ profile.avatar.url }}"
-            alt="{{ request.user.username }}"
-            width="150"
-        >
-    {% endif %}
-
-    <div>
-        {{ profile.bio|safe }}
+        <section class="content-panel">
+            <h2>My Posts</h2>
+            <div class="mini-post-list">
+                {% for post in posts %}
+                    <div class="mini-post-card">
+                        <div><h3>{{ post.title }}</h3><p>Status: <span class="status-chip">{{ post.get_status_display }}</span></p></div>
+                        <span class="mini-arrow">↗</span>
+                    </div>
+                {% empty %}
+                    <div class="empty-state">No posts yet. Your next idea can start here.</div>
+                {% endfor %}
+            </div>
+        </section>
     </div>
-
-    <p>{{ request.user.email }}</p>
-
-    {% if profile.website %}
-        <a href="{{ profile.website }}">
-            Website
-        </a>
-    {% endif %}
-
-    <br>
-
-    <a href="{% url 'profile_update' %}">
-        Edit Profile
-    </a>
-
-    <h2>My Posts</h2>
-
-    {% for post in posts %}
-
-        <p>
-            {{ post.title }}
-            -
-            {{ post.get_status_display }}
-        </p>
-
-    {% empty %}
-
-        <p>No posts yet.</p>
-
-    {% endfor %}
-
-</div>
-
+</section>
 {% endblock %}

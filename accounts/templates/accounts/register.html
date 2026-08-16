@@ -1,48 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
-
-{% block title %}
-Register
-{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/register.css' %}">
-{% endblock %}
-
+{% block title %}Register{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/register.css' %}">{% endblock %}
 {% block content %}
-
-<div class="register-page">
-
-    <div class="register-card">
-
+<section class="register-page">
+    <div class="register-visual" aria-hidden="true"><span class="register-orb register-orb--one"></span><span class="register-orb register-orb--two"></span></div>
+    <div class="register-card register-card--wide">
+        <div class="register-brand"><img src="{% static 'images/comentic-logo.png' %}" alt=""></div>
         <div class="register-header">
-            <h1>Create Account</h1>
-            <p>Join our blog and start exploring posts.</p>
+            <span>Become part of Comentic</span>
+            <h1>Create your place.</h1>
+            <p>Join the community, publish ideas, and connect through meaningful conversation.</p>
         </div>
-
         <form method="post" class="register-form">
-
             {% csrf_token %}
-
             {{ form.as_p }}
-
-            <button type="submit" class="register-btn">
-                Register
-            </button>
-
+            <button type="submit" class="register-btn">Create account <span>→</span></button>
         </form>
-
-        <div class="register-footer">
-            <p>
-                Already have an account?
-                <a href="{% url 'login' %}">
-                    Login
-                </a>
-            </p>
-        </div>
-
+        <div class="register-footer"><p>Already have an account? <a href="{% url 'login' %}">Login</a></p></div>
     </div>
-
-</div>
-
+</section>
 {% endblock %}
