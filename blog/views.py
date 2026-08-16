@@ -1,13 +1,13 @@
 from django.db import transaction
 from django.db.models import Prefetch, Q
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import Http404, HttpResponseGone
 
 from .models import BlogPost, BlogCategory
-from .forms import BlogPostForm
+from .forms import BlogPostForm, BlogPostUpdateForm
 from .services import publish_due_posts
 
 from media.models import MediaAsset, BlogPostMedia
@@ -172,7 +172,65 @@ def post_create(request):
         form = BlogPostForm()
 
     return render(request,"blog/post_create.html",{"form":form})
+@login_required(login_url="login")
+@permission_required("blog.view_blogpost",raise_exception=True)
+def my_posts(request):
+    posts = BlogPost.objects.filter(
+        author_user=request.user
+    ).order_by("-created_at")
 
+    return render(
+        request,
+        "blog/my_posts.html",
+        {"posts":posts}
+    )
+
+
+@login_required(login_url="login")
+@permission_required("blog.change_blogpost",raise_exception=True)
+def post_update(request,id):
+    post = get_object_or_404(
+        BlogPost,
+        id=id,
+        author_user=request.user
+    )
+
+    if post.status not in ["draft","rejected"]:
+        return redirect("blog:my_posts")
+
+    if request.method == "POST":
+        form = BlogPostUpdateForm(
+            request.POST,
+            instance=post
+        )
+
+        if form.is_valid():
+            post = form.save(commit=False)
+
+            action = request.POST.get("action")
+
+            if action == "draft":
+                post.status = "draft"
+            else:
+                post.status = "pending_review"
+
+            post.save()
+
+            return redirect("blog:my_posts")
+
+    else:
+        form = BlogPostUpdateForm(
+            instance=post
+        )
+
+    return render(
+        request,
+        "blog/post_update.html",
+        {
+            "form":form,
+            "post":post,
+        }
+    )
 
 def post_detail(request, slug):
     publish_due_posts()
