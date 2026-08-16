@@ -81,6 +81,8 @@ class Command(BaseCommand):
                     'add_blogpost',
                     'change_blogpost',
                     'view_blogpost',
+                    'delete_blogpost',
+
                 ]
             )
 

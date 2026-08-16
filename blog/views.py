@@ -1,15 +1,13 @@
 from django.db import transaction
 from django.db.models import Prefetch, Q
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import Http404, HttpResponseGone
-
 from .models import BlogPost, BlogCategory
-from .forms import BlogPostForm
+from .forms import BlogPostForm, BlogPostEditForm
 from .services import publish_due_posts
-
+from django.shortcuts import render, redirect, get_object_or_404
 from media.models import MediaAsset, BlogPostMedia
 from media.services import create_media_asset
 from analytics.services import add_view
@@ -17,6 +15,7 @@ from blog.models import BlogSlugRedirect
 from seo.models import GoneURL
 from core.models import SiteSettings
 from social.models import BlogBookmark, BlogComment, BlogContentReport, BlogReaction
+from django.views.decorators.http import require_POST
 
 
 def post_list(request):
@@ -118,12 +117,18 @@ def post_create(request):
 
         if form.is_valid():
             post = form.save(commit=False)
+
             post.author_user = request.user
             post.status = "pending_review"
+
+        
+            post.seo_title = post.title
+            post.seo_description = post.summary
+
             post.save()
 
             cover_image = form.cleaned_data["cover_image"]
-            cover_alt = form.cleaned_data.get("cover_alt") or post.title
+            cover_alt = post.title
 
             cover_asset = create_media_asset(
                 uploaded_file=cover_image,
@@ -172,6 +177,69 @@ def post_create(request):
         {"form": form},
     )
 
+@login_required(login_url="login")
+@permission_required("blog.change_blogpost", raise_exception=True)
+@transaction.atomic
+def post_edit(request, slug):
+
+    post = get_object_or_404(
+        BlogPost,
+        slug=slug,
+        author_user=request.user,
+    )
+
+    if request.method == "POST":
+
+        form = BlogPostEditForm(
+            request.POST,
+            instance=post,
+        )
+
+        if form.is_valid():
+
+            post = form.save(commit=False)
+
+            # Because the author changed the post,
+            # send it for review again
+            post.status = "pending_review"
+
+            # Default SEO values
+            post.seo_title = post.title
+            post.seo_description = post.summary
+
+            post.save()
+
+            return redirect("profile")
+
+    else:
+
+        form = BlogPostEditForm(
+            instance=post,
+        )
+
+    return render(
+        request,
+        "blog/post_edit.html",
+        {
+            "form": form,
+            "post": post,
+        },
+    )
+
+@login_required(login_url="login")
+@permission_required("blog.delete_blogpost", raise_exception=True)
+@require_POST
+def post_delete(request, slug):
+
+    post = get_object_or_404(
+        BlogPost,
+        slug=slug,
+        author_user=request.user,
+    )
+
+    post.delete()
+
+    return redirect("profile")
 
 def post_detail(request, slug):
     publish_due_posts()
@@ -185,14 +253,21 @@ def post_detail(request, slug):
         return HttpResponseGone("This page has been permanently removed.")
 
     try:
+        visibility_filter = Q(
+            status="published",
+            published_at__lte=timezone.now(),
+        )
+
+        if request.user.is_authenticated:
+            visibility_filter |= Q(author_user=request.user)
+
         post = (
             BlogPost.objects
             .select_related("author_user", "category")
             .prefetch_related("tags")
             .get(
+                visibility_filter,
                 slug=slug,
-                status="published",
-                published_at__lte=timezone.now(),
             )
         )
     except BlogPost.DoesNotExist:
