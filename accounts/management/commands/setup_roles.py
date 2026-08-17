@@ -28,7 +28,6 @@ class Command(BaseCommand):
         )
 
 
-        # ADMIN
 
         admin_permissions = Permission.objects.filter(
             content_type__app_label__in=[
@@ -48,7 +47,6 @@ class Command(BaseCommand):
         )
 
 
-        # USER
 
         user_permissions = Permission.objects.filter(
             Q(
@@ -71,7 +69,6 @@ class Command(BaseCommand):
         )
 
 
-        # AUTHOR
 
         author_permissions = Permission.objects.filter(
 
@@ -103,7 +100,6 @@ class Command(BaseCommand):
         )
 
 
-        # EDITOR
 
         editor_permissions = Permission.objects.filter(
             content_type__app_label='blog'
@@ -114,7 +110,6 @@ class Command(BaseCommand):
         )
 
 
-        # MODERATOR
 
         moderator_permissions = Permission.objects.filter(
             content_type__app_label='social',
