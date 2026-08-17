@@ -36,9 +36,22 @@ class BlogPostForm(forms.ModelForm):
         help_text="Required. JPG, PNG, GIF or WebP; maximum 10 MB.",
     )
 
-    cover_alt = forms.CharField(
-        max_length=255,
-        required=False,
+    summary = forms.CharField(
+        min_length=100,
+        max_length=500,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 4,
+                "placeholder": "Write a summary between 100 and 500 characters.",
+            }
+        ),
+        
+        help_text="Summary must be between 100 and 500 characters.",
+        error_messages={
+            "min_length": "Summary must be at least 100 characters.",
+            "max_length": "Summary cannot be more than 500 characters.",
+            "required": "Please write a summary.",
+        },
     )
 
     media_files = MultipleFileField(
@@ -67,8 +80,6 @@ class BlogPostForm(forms.ModelForm):
             "title",
             "summary",
             "content",
-            "seo_title",
-            "seo_description",
         ]
 
     def clean_cover_image(self):
@@ -119,9 +130,23 @@ class BlogPostUpdateForm(forms.ModelForm):
             "seo_title",
             "seo_description",
         ]
+
+
 class SchedulePostForm(forms.Form):
     scheduled_for = forms.DateTimeField(
         widget=forms.DateTimeInput(
-            attrs={"type":"datetime-local"}
+            attrs={"type": "datetime-local"}
         )
     )
+
+
+class BlogPostEditForm(forms.ModelForm):
+
+    class Meta:
+        model = BlogPost
+        fields = [
+            "category",
+            "title",
+            "summary",
+            "content",
+        ]

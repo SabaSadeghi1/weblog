@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit {{ post.title }}
+{% endblock %}
+
+{% block seo_meta %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block content %}
+
+<section class="create-post-page">
+
+    <div class="create-post-container">
+
+        <h1>Edit Post</h1>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.media }}
+
+            {{ form.as_p }}
+
+            <button type="submit">
+                Save Changes
+            </button>
+
+            <a href="{% url 'profile' %}">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}
