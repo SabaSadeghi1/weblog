@@ -52,9 +52,13 @@
                                 View
                             </a>
 
-                            <a href="{% url 'blog:post_edit' slug=post.slug %}">
-                                Edit
-                            </a>
+                            {% if post.status == "draft" or post.status == "rejected" %}
+
+                                <a href="{% url 'blog:post_edit' slug=post.slug %}">
+                                    Edit
+                                </a>
+
+                            {% endif %}
 
                             <form
                                 method="post"
