@@ -174,7 +174,6 @@
                                 href="{% url 'blog:post_detail' slug=post.slug %}"
                                 class="post-action-btn post-view-btn"
                             >
-
                                 <span>
                                     View
                                 </span>
@@ -182,19 +181,22 @@
                                 <span class="action-arrow">
                                     ↗
                                 </span>
-
                             </a>
 
 
 
                             <!-- EDIT -->
 
-                            <a
-                                href="{% url 'blog:post_edit' slug=post.slug %}"
-                                class="post-action-btn post-edit-btn"
-                            >
-                                Edit
-                            </a>
+                            {% if post.status == "draft" or post.status == "rejected" %}
+
+                                <a
+                                    href="{% url 'blog:post_edit' slug=post.slug %}"
+                                    class="post-action-btn post-edit-btn"
+                                >
+                                    Edit
+                                </a>
+
+                            {% endif %}
 
 
 

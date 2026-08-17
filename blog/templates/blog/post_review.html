@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}
+Review Post
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>{{ post.title }}</h1>
+
+    <p>
+        Author:
+        {{ post.author_user.username }}
+    </p>
+
+    <p>
+        Status:
+        {{ post.get_status_display }}
+    </p>
+
+    <p>
+        {{ post.summary }}
+    </p>
+
+    <hr>
+
+    {{ post.content|safe }}
+
+    <hr>
+
+
+    {% if post.status == "pending_review" %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                name="action"
+                value="approve"
+            >
+                Approve
+            </button>
+
+            <button
+                type="submit"
+                name="action"
+                value="reject"
+            >
+                Reject
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+    {% if post.status == "approved" %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                name="action"
+                value="publish"
+            >
+                Publish Now
+            </button>
+
+        </form>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ schedule_form.as_p }}
+
+            <button
+                type="submit"
+                name="action"
+                value="schedule"
+            >
+                Schedule
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+    {% if post.status == "published" %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                name="action"
+                value="archive"
+            >
+                Archive
+            </button>
+
+        </form>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

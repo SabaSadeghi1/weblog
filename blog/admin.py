@@ -90,7 +90,33 @@ class BlogPostAdmin(admin.ModelAdmin):
         "updated_at",
     )
     inlines = (BlogPostTagInline, BlogPostMediaInline)
+    actions = ["approve_posts","reject_posts","publish_posts","archive_posts"]
+    def approve_posts(self,request,queryset):
+        for post in queryset:
+            if post.status == "pending_review":
+                post.status = "approved"
+                post.save()
 
+
+    def reject_posts(self,request,queryset):
+        for post in queryset:
+            if post.status == "pending_review":
+                post.status = "rejected"
+                post.save()
+
+
+    def publish_posts(self,request,queryset):
+        for post in queryset:
+            if post.status == "approved":
+                post.status = "published"
+                post.save()
+
+
+    def archive_posts(self,request,queryset):
+        for post in queryset:
+            if post.status == "published":
+                post.status = "archived"
+                post.save()
     @transaction.atomic
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

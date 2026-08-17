@@ -7,14 +7,16 @@ from django_ckeditor_5.fields import CKEditor5Field
 from django.urls import reverse
 
 class BlogPost(models.Model):
-    STATUS_CHOICES = (("draft","Draft"),("pending_review","Pending Review"),("approved","Approved"),("scheduled","Scheduled"),("published","Published"),("rejected","Rejected"),)
-    author_user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name="blog_posts",)
-    category = models.ForeignKey("BlogCategory",on_delete=models.PROTECT,related_name="posts",)
+    STATUS_CHOICES = (("draft","Draft"),("pending_review","Pending Review"),("approved","Approved"),("scheduled","Scheduled"),("published","Published"),("rejected","Rejected"),("archived","Archived"),)
+    VISIBILITY_CHOICES = (("public","Public"),("only_members","Only Members"),("private","Private"),)
+    author_user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name="blog_posts")
+    category = models.ForeignKey("BlogCategory",on_delete=models.PROTECT,related_name="posts")
     title = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=270,unique=True,blank=True,editable=False,allow_unicode=True,)
+    slug = models.SlugField(max_length=270,unique=True,blank=True,editable=False,allow_unicode=True)
     summary = models.CharField(max_length=500)
     content = CKEditor5Field(config_name="extends")
     status = models.CharField(max_length=30,choices=STATUS_CHOICES,default="draft")
+    visibility = models.CharField(max_length=20,choices=VISIBILITY_CHOICES,default="public")
     is_featured = models.BooleanField(default=False)
     allow_comments = models.BooleanField(default=True)
     comment_count = models.PositiveIntegerField(default=0, editable=False)
@@ -26,49 +28,38 @@ class BlogPost(models.Model):
     seo_description = models.CharField(max_length=500,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    tags = models.ManyToManyField("BlogTag",through="BlogPostTag",related_name="posts",blank=True,)
+    tags = models.ManyToManyField("BlogTag",through="BlogPostTag",related_name="posts",blank=True)
 
-    def __str__(self):
+    def  __str__(self):
         return self.title
     def get_absolute_url(self):
         return reverse("blog:post_detail",kwargs={"slug":self.slug})
-
     def clean(self):
         errors = {}
-
         if self.status == "scheduled":
             if not self.scheduled_for:
-                errors["scheduled_for"] = "Scheduled posts must have a publication date."
+                errors["scheduled_for"] = "تایم انتشار رو باید وارد کنی حتما."
             elif self.scheduled_for <= timezone.now():
-                errors["scheduled_for"] = "Scheduled publication must be in the future."
-
+                errors["scheduled_for"] = "تایم باید برای ایندده باشه."
         if errors:
             raise ValidationError(errors)
-
-    def save(self, *args, **kwargs):
+    def save(self,*args,**kwargs):
         if not self.slug:
-            base_slug = slugify(self.title,allow_unicode=True,) or "post"
+            base_slug = slugify(self.title,allow_unicode=True) or "post"
             slug = base_slug
             number = 1
-
             while BlogPost.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 number += 1
                 slug = f"{base_slug}-{number}"
-
             self.slug = slug
-
         if self.status == "published":
             if not self.published_at:
                 self.published_at = timezone.now()
             self.scheduled_for = None
-        else:
-            self.published_at = None
-
-            if self.status != "scheduled":
-                self.scheduled_for = None
-
+        elif self.status != "scheduled":
+            self.scheduled_for = None
         self.full_clean()
-        super().save(*args, **kwargs)
-
+        super().save(*args,**kwargs)
     class Meta:
         db_table = "blog_posts"
+        ordering = ["-created_at"]
