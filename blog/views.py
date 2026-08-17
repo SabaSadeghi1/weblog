@@ -1,13 +1,13 @@
 from django.db import transaction
 from django.db.models import Prefetch, Q
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import Http404, HttpResponseGone
 from .models import BlogPost, BlogCategory
-from .forms import BlogPostForm, BlogPostEditForm
+from .forms import (BlogPostForm,SchedulePostForm,BlogPostEditForm,)
 from .services import publish_due_posts
-from django.shortcuts import render, redirect, get_object_or_404
 from media.models import MediaAsset, BlogPostMedia
 from media.services import create_media_asset
 from analytics.services import add_view
@@ -110,18 +110,19 @@ def post_list(request):
 @transaction.atomic
 def post_create(request):
     if request.method == "POST":
-        form = BlogPostForm(
-            request.POST,
-            request.FILES,
-        )
+        form = BlogPostForm(request.POST,request.FILES)
 
         if form.is_valid():
             post = form.save(commit=False)
 
             post.author_user = request.user
-            post.status = "pending_review"
+            action = request.POST.get("action")
 
-        
+            if action == "draft":
+                post.status = "draft"
+            else:
+                post.status = "pending_review"
+
             post.seo_title = post.title
             post.seo_description = post.summary
 
@@ -147,7 +148,7 @@ def post_create(request):
 
             media_files = form.cleaned_data.get("media_files", [])
 
-            for sort_order, uploaded_file in enumerate(media_files, start=1):
+            for sort_order, uploaded_file in enumerate(media_files,start=1):
                 media_asset = create_media_asset(
                     uploaded_file=uploaded_file,
                     uploaded_by=request.user,
@@ -168,13 +169,22 @@ def post_create(request):
                 )
 
             return redirect("blog:post_list")
+
     else:
         form = BlogPostForm()
 
+    return render(request,"blog/post_create.html",{"form":form})
+@login_required(login_url="login")
+@permission_required("blog.view_blogpost",raise_exception=True)
+def my_posts(request):
+    posts = BlogPost.objects.filter(
+        author_user=request.user
+    ).order_by("-created_at")
+
     return render(
         request,
-        "blog/post_create.html",
-        {"form": form},
+        "blog/my_posts.html",
+        {"posts":posts}
     )
 
 @login_required(login_url="login")
@@ -188,6 +198,9 @@ def post_edit(request, slug):
         author_user=request.user,
     )
 
+    if post.status not in ["draft", "rejected"]:
+        return redirect("profile")
+
     if request.method == "POST":
 
         form = BlogPostEditForm(
@@ -199,11 +212,14 @@ def post_edit(request, slug):
 
             post = form.save(commit=False)
 
-            # Because the author changed the post,
-            # send it for review again
-            post.status = "pending_review"
+            action = request.POST.get("action")
 
-            # Default SEO values
+            if action == "draft":
+                post.status = "draft"
+
+            else:
+                post.status = "pending_review"
+
             post.seo_title = post.title
             post.seo_description = post.summary
 
@@ -225,7 +241,6 @@ def post_edit(request, slug):
             "post": post,
         },
     )
-
 @login_required(login_url="login")
 @permission_required("blog.delete_blogpost", raise_exception=True)
 @require_POST
@@ -241,6 +256,27 @@ def post_delete(request, slug):
 
     return redirect("profile")
 
+@login_required(login_url="login")
+def editor_posts(request):
+
+    if not request.user.is_superuser and not request.user.groups.filter(name="Editor").exists():
+        return redirect("blog:post_list")
+
+    posts = BlogPost.objects.filter(
+        status__in=[
+            "pending_review",
+            "approved",
+            "scheduled",
+            "published",
+            "rejected",
+        ]
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "blog/editor_posts.html",
+        {"posts":posts}
+    )
 def post_detail(request, slug):
     publish_due_posts()
 
@@ -395,4 +431,56 @@ def post_detail(request, slug):
             "report_reasons": BlogContentReport.Reason.choices,
             "related_posts": related_posts,
         },
+    )
+@login_required(login_url="login")
+def post_review(request,id):
+
+    if not request.user.is_superuser and not request.user.groups.filter(name="Editor").exists():
+        return redirect("blog:post_list")
+
+    post = get_object_or_404(
+        BlogPost,
+        id=id
+    )
+
+    schedule_form = SchedulePostForm()
+
+    if request.method == "POST":
+
+        action = request.POST.get("action")
+
+        if action == "approve" and post.status == "pending_review":
+            post.status = "approved"
+            post.save()
+
+        elif action == "reject" and post.status == "pending_review":
+            post.status = "rejected"
+            post.save()
+
+        elif action == "publish" and post.status == "approved":
+            post.status = "published"
+            post.save()
+
+        elif action == "schedule" and post.status == "approved":
+
+            schedule_form = SchedulePostForm(request.POST)
+
+            if schedule_form.is_valid():
+                post.status = "scheduled"
+                post.scheduled_for = schedule_form.cleaned_data["scheduled_for"]
+                post.save()
+
+        elif action == "archive" and post.status == "published":
+            post.status = "archived"
+            post.save()
+
+        return redirect("blog:editor_posts")
+
+    return render(
+        request,
+        "blog/post_review.html",
+        {
+            "post":post,
+            "schedule_form":schedule_form,
+        }
     )

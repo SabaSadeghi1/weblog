@@ -1,0 +1,758 @@
+/* =========================================================
+   COMENTIC — EDIT POST
+   ========================================================= */
+
+
+/* PAGE */
+
+.edit-post-page {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+
+    min-height: 80vh;
+    padding: 72px 0 115px;
+}
+
+
+.edit-post-page::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: -2;
+
+    background:
+        radial-gradient(
+            circle at 4% 8%,
+            rgba(168,239,79,.18),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 94% 7%,
+            rgba(94,60,246,.17),
+            transparent 29%
+        ),
+        radial-gradient(
+            circle at 76% 65%,
+            rgba(40,117,246,.10),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 20% 86%,
+            rgba(22,207,197,.09),
+            transparent 25%
+        );
+
+    pointer-events: none;
+}
+
+
+.edit-post-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    left: 50%;
+    top: 430px;
+
+    z-index: -1;
+
+    border-radius: 50%;
+
+    background: rgba(40,117,246,.05);
+
+    filter: blur(90px);
+
+    transform: translateX(-50%);
+}
+
+
+
+/* CONTAINER */
+
+.edit-post-container {
+    width: min(1040px, calc(100% - 48px));
+
+    margin: 0 auto;
+}
+
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.edit-post-heading {
+    max-width: 780px;
+
+    margin-bottom: 31px;
+}
+
+
+.edit-post-kicker {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 7px 12px;
+
+    border: 1px solid rgba(94,60,246,.11);
+    border-radius: 999px;
+
+    color: #4652c9;
+
+    background:
+        linear-gradient(
+            110deg,
+            rgba(168,239,79,.14),
+            rgba(22,207,197,.09),
+            rgba(94,60,246,.09)
+        );
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+
+.edit-post-kicker::before {
+    content: "";
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--brand-cyan),
+            var(--brand-blue)
+        );
+
+    box-shadow:
+        0 0 0 4px rgba(40,117,246,.08);
+}
+
+
+.edit-post-heading h1 {
+    position: relative;
+
+    width: fit-content;
+
+    margin: 18px 0 14px;
+
+    color: var(--brand-navy);
+
+    font-family: var(--font-serif);
+
+    font-size: clamp(54px, 6.3vw, 80px);
+
+    line-height: .98;
+    letter-spacing: -1.4px;
+}
+
+
+.edit-post-heading h1::after {
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+    bottom: -7px;
+
+    width: 46%;
+    height: 4px;
+
+    border-radius: 999px;
+
+    background: var(--gradient-brand-wide);
+}
+
+
+.edit-post-heading p {
+    max-width: 670px;
+
+    margin: 0;
+
+    color: var(--brand-muted);
+
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.edit-post-card {
+    position: relative;
+
+    padding: 30px;
+
+    border: 1px solid rgba(255,255,255,.88);
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.88),
+            rgba(246,251,255,.70)
+        );
+
+    box-shadow:
+        var(--brand-shadow);
+
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+
+
+/* =========================================================
+   CURRENT POST SUMMARY
+   ========================================================= */
+
+.edit-post-summary {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 17px 18px;
+
+    margin-bottom: 14px;
+
+    border: 1px solid rgba(40,117,246,.09);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            110deg,
+            rgba(238,249,255,.82),
+            rgba(241,239,255,.70)
+        );
+}
+
+
+.edit-post-summary-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+
+    color: var(--brand-violet);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(168,239,79,.20),
+            rgba(22,207,197,.15),
+            rgba(94,60,246,.14)
+        );
+
+    font-size: 18px;
+}
+
+
+.edit-post-summary-label {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #8691a6;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: .11em;
+    text-transform: uppercase;
+}
+
+
+.edit-post-summary strong {
+    display: block;
+
+    color: var(--brand-navy);
+
+    font-size: 14px;
+}
+
+
+.edit-post-current-status {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 8px;
+
+    color: #7a879c;
+
+    font-size: 10px;
+}
+
+
+
+/* STATUS CHIP */
+
+.edit-status-chip {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 26px;
+
+    padding: 0 9px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+
+.status-draft {
+    color: #80610c;
+
+    background: rgba(248,215,91,.26);
+}
+
+
+.status-rejected {
+    color: #a33d59;
+
+    background: rgba(255,143,172,.20);
+}
+
+
+.status-pending_review {
+    color: #6248b6;
+
+    background: rgba(201,200,255,.40);
+}
+
+
+.status-published {
+    color: #13705a;
+
+    background: rgba(121,229,142,.22);
+}
+
+
+
+/* =========================================================
+   REVIEW NOTE
+   ========================================================= */
+
+.edit-post-note {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 16px 18px;
+
+    margin-bottom: 28px;
+
+    border: 1px solid rgba(94,60,246,.09);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            110deg,
+            rgba(246,248,255,.85),
+            rgba(240,237,255,.75)
+        );
+}
+
+
+.edit-post-note-icon {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    color: #5448d2;
+
+    background: rgba(255,255,255,.72);
+
+    font-size: 17px;
+}
+
+
+.edit-post-note strong {
+    color: var(--brand-navy);
+
+    font-size: 12px;
+}
+
+
+.edit-post-note p {
+    margin: 3px 0 0;
+
+    color: #69758c;
+
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.edit-post-form p {
+    margin: 0 0 21px;
+}
+
+
+.edit-post-form label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #233250;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+
+
+/* inputs */
+
+.edit-post-form input[type="text"],
+.edit-post-form input[type="url"],
+.edit-post-form input[type="email"],
+.edit-post-form input[type="number"],
+.edit-post-form select,
+.edit-post-form textarea {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px 15px;
+
+    border: 1px solid rgba(71,92,135,.15);
+    border-radius: 13px;
+
+    color: var(--brand-navy);
+
+    background: rgba(248,251,255,.90);
+
+    outline: none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+
+.edit-post-form input:hover,
+.edit-post-form select:hover,
+.edit-post-form textarea:hover {
+    border-color: rgba(40,117,246,.28);
+}
+
+
+.edit-post-form input:focus,
+.edit-post-form select:focus,
+.edit-post-form textarea:focus {
+    border-color: rgba(40,117,246,.55);
+
+    background: #fff;
+
+    box-shadow:
+        0 0 0 4px rgba(40,117,246,.09);
+}
+
+
+.edit-post-form textarea {
+    min-height: 125px;
+
+    resize: vertical;
+
+    line-height: 1.7;
+}
+
+
+
+/* =========================================================
+   HELP TEXT
+   ========================================================= */
+
+.edit-post-form .helptext {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #8a95a8;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+
+
+/* =========================================================
+   ERRORS
+   ========================================================= */
+
+.edit-post-form .errorlist {
+    list-style: none;
+
+    margin: 0 0 10px;
+    padding: 10px 12px;
+
+    border: 1px solid rgba(218,70,102,.08);
+    border-radius: 11px;
+
+    color: #a53044;
+
+    background: #fff0f4;
+
+    font-size: 11px;
+}
+
+
+
+/* =========================================================
+   CKEDITOR
+   ========================================================= */
+
+.edit-post-form .django-ckeditor-widget,
+.edit-post-form .ck-editor {
+    width: 100% !important;
+}
+
+
+.edit-post-form .ck.ck-toolbar {
+    border-color: rgba(71,92,135,.15) !important;
+
+    border-radius: 13px 13px 0 0 !important;
+
+    background: rgba(245,249,255,.94) !important;
+}
+
+
+.edit-post-form .ck-editor__editable {
+    min-height: 290px;
+
+    border-color: rgba(71,92,135,.15) !important;
+
+    border-radius: 0 0 13px 13px !important;
+
+    background: rgba(255,255,255,.94) !important;
+}
+
+
+.edit-post-form .ck.ck-editor__editable.ck-focused {
+    border-color: rgba(40,117,246,.48) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(40,117,246,.07) !important;
+}
+
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.edit-post-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    margin-top: 31px;
+    padding-top: 24px;
+
+    border-top: 1px solid rgba(71,92,135,.10);
+}
+
+
+
+/* CANCEL */
+
+.edit-post-cancel {
+    min-height: 43px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 18px;
+
+    border: 1px solid rgba(71,92,135,.13);
+    border-radius: 999px;
+
+    color: #49576e;
+
+    background: rgba(255,255,255,.70);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+
+.edit-post-cancel:hover {
+    transform: translateY(-2px);
+
+    background: #fff;
+
+    box-shadow:
+        0 8px 20px rgba(44,68,119,.07);
+}
+
+
+
+/* SAVE */
+
+.edit-post-submit {
+    min-height: 45px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 0 21px;
+
+    border: 0;
+    border-radius: 999px;
+
+    color: #fff;
+
+    background: var(--gradient-brand);
+
+    box-shadow:
+        0 12px 28px rgba(69,78,236,.22);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
+}
+
+
+.edit-post-submit:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 34px rgba(69,78,236,.29);
+
+    filter: saturate(1.08);
+}
+
+
+.edit-post-submit span {
+    font-size: 15px;
+
+    transition: transform .2s ease;
+}
+
+
+.edit-post-submit:hover span {
+    transform: translateX(3px);
+}
+
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.edit-post-submit:focus-visible,
+.edit-post-cancel:focus-visible {
+    outline: 3px solid rgba(40,117,246,.20);
+    outline-offset: 3px;
+}
+
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .edit-post-page {
+        padding: 42px 0 75px;
+    }
+
+
+    .edit-post-container {
+        width: min(100% - 24px, 1040px);
+    }
+
+
+    .edit-post-heading h1 {
+        font-size: 56px;
+    }
+
+
+    .edit-post-card {
+        padding: 20px 16px;
+
+        border-radius: 24px;
+    }
+
+
+    .edit-post-summary,
+    .edit-post-note {
+        align-items: flex-start;
+    }
+
+
+    .edit-post-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+
+    .edit-post-cancel,
+    .edit-post-submit {
+        width: 100%;
+
+        text-align: center;
+    }
+
+}

@@ -119,11 +119,18 @@ class BlogPostForm(forms.ModelForm):
 
         return media_files
 
+class SchedulePostForm(forms.Form):
+    scheduled_for = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            attrs={"type": "datetime-local"}
+        )
+    )
+
+
 class BlogPostEditForm(forms.ModelForm):
 
     class Meta:
         model = BlogPost
-
         fields = [
             "category",
             "title",

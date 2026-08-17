@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 Edit {{ post.title }}
@@ -8,31 +9,155 @@ Edit {{ post.title }}
 <meta name="robots" content="noindex, nofollow">
 {% endblock %}
 
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/post_edit.css' %}"
+>
+{% endblock %}
+
+
 {% block content %}
 
-<section class="create-post-page">
+<section class="edit-post-page">
 
-    <div class="create-post-container">
+    <div class="edit-post-container">
 
-        <h1>Edit Post</h1>
 
-        <form method="post">
+        <!-- =========================
+             PAGE HEADING
+        ========================== -->
 
-            {% csrf_token %}
+        <header class="edit-post-heading">
 
-            {{ form.media }}
+            <span class="edit-post-kicker">
+                Refine your story
+            </span>
 
-            {{ form.as_p }}
+            <h1>
+                Edit your post.
+            </h1>
 
-            <button type="submit">
-                Save Changes
-            </button>
+            <p>
+                Update your writing, review the details, and submit
+                your changes when everything is ready.
+            </p>
 
-            <a href="{% url 'profile' %}">
-                Cancel
-            </a>
+        </header>
 
-        </form>
+
+
+        <!-- =========================
+             FORM CARD
+        ========================== -->
+
+        <div class="edit-post-card">
+
+
+            <!-- CURRENT POST -->
+
+            <div class="edit-post-summary">
+
+                <div class="edit-post-summary-icon">
+                    ✦
+                </div>
+
+                <div>
+
+                    <span class="edit-post-summary-label">
+                        Currently editing
+                    </span>
+
+                    <strong>
+                        {{ post.title }}
+                    </strong>
+
+                    <div class="edit-post-current-status">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <span class="edit-status-chip status-{{ post.status }}">
+                            {{ post.get_status_display }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- NOTICE -->
+
+            <div class="edit-post-note">
+
+                <div class="edit-post-note-icon">
+                    ↻
+                </div>
+
+                <div>
+
+                    <strong>
+                        Changes require another review
+                    </strong>
+
+                    <p>
+                        After saving your changes, this post will be
+                        submitted for review again before publication.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                method="post"
+                class="edit-post-form"
+            >
+
+                {% csrf_token %}
+
+                {{ form.media }}
+
+                {{ form.as_p }}
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="edit-post-actions">
+
+                    <a
+                        href="{% url 'profile' %}"
+                        class="edit-post-cancel"
+                    >
+                        ← Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="edit-post-submit"
+                    >
+                        Save Changes
+
+                        <span>
+                            →
+                        </span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 

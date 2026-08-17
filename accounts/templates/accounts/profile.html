@@ -1,83 +1,258 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}My Profile{% endblock %}
-{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block seo_meta %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+
 {% block content %}
+
 <section class="account-page">
+
     <div class="container account-layout">
+
+
+        <!-- =========================
+             PROFILE HEADER
+        ========================== -->
+
         <div class="profile-hero">
+
             {% if profile.avatar %}
-                <img class="profile-avatar-large" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}">
+
+                <img
+                    class="profile-avatar-large"
+                    src="{{ profile.avatar.url }}"
+                    alt="{{ request.user.username }}"
+                >
+
             {% else %}
-                <div class="profile-avatar-fallback">{{ request.user.username|first|upper }}</div>
-            {% endif %}
-            <div>
-                <span class="page-eyebrow">Your space</span>
-                <h1>{% if profile.display_name %}{{ profile.display_name }}{% else %}{{ request.user.username }}{% endif %}</h1>
-                <p>{{ profile.bio|striptags|default:"Your profile is your home inside the Comentic community." }}</p>
-                <div class="profile-meta">
-                    <span>{{ request.user.email }}</span>
-                    {% if profile.website %}<a href="{{ profile.website }}">Website ↗</a>{% endif %}
+
+                <div class="profile-avatar-fallback">
+                    {{ request.user.username|first|upper }}
                 </div>
+
+            {% endif %}
+
+
+            <div class="profile-main-info">
+
+                <span class="page-eyebrow">
+                    Your space
+                </span>
+
+                <h1>
+                    {% if profile.display_name %}
+                        {{ profile.display_name }}
+                    {% else %}
+                        {{ request.user.username }}
+                    {% endif %}
+                </h1>
+
+                <p>
+                    {{ profile.bio|striptags|default:"Your profile is your home inside the Comentic community." }}
+                </p>
+
+
+                <div class="profile-meta">
+
+                    <span>
+                        {{ request.user.email }}
+                    </span>
+
+                    {% if profile.website %}
+
+                        <a
+                            href="{{ profile.website }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Website ↗
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
             </div>
-            <a class="profile-action" href="{% url 'profile_update' %}">Edit Profile</a>
+
+
+            <a
+                class="profile-action"
+                href="{% url 'profile_update' %}"
+            >
+                Edit Profile
+            </a>
+
         </div>
 
-        <section class="content-panel">
-            <h2>My Posts</h2>
-            <div class="mini-post-list">
-                {% for post in posts %}
-                    <div class="mini-post-card">
 
-                        <div>
+
+        <!-- =========================
+             MY POSTS
+        ========================== -->
+
+        <section class="content-panel profile-posts-panel">
+
+
+            <div class="profile-posts-header">
+
+                <div>
+
+                    <span class="page-eyebrow">
+                        Your writing
+                    </span>
+
+                    <h2>
+                        My Posts
+                    </h2>
+
+                </div>
+
+
+                <span class="posts-count">
+                    {{ posts|length }}
+                    post{{ posts|length|pluralize }}
+                </span>
+
+            </div>
+
+
+
+            <div class="mini-post-list">
+
+
+                {% for post in posts %}
+
+                    <article class="mini-post-card">
+
+
+                        <!-- POST INFO -->
+
+                        <div class="mini-post-info">
 
                             <h3>
+
                                 <a href="{% url 'blog:post_detail' slug=post.slug %}">
                                     {{ post.title }}
                                 </a>
+
                             </h3>
 
-                            <p>
-                                Status:
-                                <span class="status-chip">
+
+                            <div class="mini-post-meta">
+
+                                <span class="status-label">
+                                    Status
+                                </span>
+
+                                <span class="status-chip status-{{ post.status }}">
                                     {{ post.get_status_display }}
                                 </span>
-                            </p>
+
+                            </div>
 
                         </div>
 
 
+
+                        <!-- ACTIONS -->
+
                         <div class="post-actions">
 
-                            <a href="{% url 'blog:post_detail' slug=post.slug %}">
-                                View
+
+                            <!-- VIEW -->
+
+                            <a
+                                href="{% url 'blog:post_detail' slug=post.slug %}"
+                                class="post-action-btn post-view-btn"
+                            >
+                                <span>
+                                    View
+                                </span>
+
+                                <span class="action-arrow">
+                                    ↗
+                                </span>
                             </a>
 
-                            <a href="{% url 'blog:post_edit' slug=post.slug %}">
-                                Edit
-                            </a>
+
+
+                            <!-- EDIT -->
+
+                            {% if post.status == "draft" or post.status == "rejected" %}
+
+                                <a
+                                    href="{% url 'blog:post_edit' slug=post.slug %}"
+                                    class="post-action-btn post-edit-btn"
+                                >
+                                    Edit
+                                </a>
+
+                            {% endif %}
+
+
+
+                            <!-- DELETE -->
 
                             <form
                                 method="post"
                                 action="{% url 'blog:post_delete' slug=post.slug %}"
+                                class="post-delete-form"
                                 onsubmit="return confirm('Are you sure you want to delete this post?');"
                             >
 
                                 {% csrf_token %}
 
-                                <button type="submit">
+                                <button
+                                    type="submit"
+                                    class="post-action-btn post-delete-btn"
+                                >
                                     Delete
                                 </button>
 
                             </form>
 
+
                         </div>
 
-                    </div>
+                    </article>
+
+
+
                 {% empty %}
-                    <div class="empty-state">No posts yet. Your next idea can start here.</div>
+
+
+                    <div class="empty-state">
+
+                        <strong>
+                            No posts yet.
+                        </strong>
+
+                        <span>
+                            Your next idea can start here.
+                        </span>
+
+                    </div>
+
+
                 {% endfor %}
+
+
             </div>
+
         </section>
+
+
     </div>
+
 </section>
+
 {% endblock %}
