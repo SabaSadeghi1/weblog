@@ -6,10 +6,7 @@ app_name = "blog"
 urlpatterns = [
     path("", views.post_list, name="post_list"),
     path("new/", views.post_create, name="post_create"),
-
     path("mine/", views.my_posts, name="my_posts"),
-    path("edit/<int:id>/", views.post_update, name="post_update"),
-
     path("editor/", views.editor_posts, name="editor_posts"),
     path("editor/<int:id>/", views.post_review, name="post_review"),
 

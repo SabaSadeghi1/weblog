@@ -118,19 +118,6 @@ class BlogPostForm(forms.ModelForm):
             raise ValidationError(errors)
 
         return media_files
-class BlogPostUpdateForm(forms.ModelForm):
-
-    class Meta:
-        model = BlogPost
-        fields = [
-            "category",
-            "title",
-            "summary",
-            "content",
-            "seo_title",
-            "seo_description",
-        ]
-
 
 class SchedulePostForm(forms.Form):
     scheduled_for = forms.DateTimeField(

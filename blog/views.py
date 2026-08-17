@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from django.http import Http404, HttpResponseGone
 from .models import BlogPost, BlogCategory
-from .forms import (BlogPostForm,BlogPostUpdateForm,SchedulePostForm,BlogPostEditForm,)
+from .forms import (BlogPostForm,SchedulePostForm,BlogPostEditForm,)
 from .services import publish_due_posts
 from media.models import MediaAsset, BlogPostMedia
 from media.services import create_media_asset
@@ -198,6 +198,9 @@ def post_edit(request, slug):
         author_user=request.user,
     )
 
+    if post.status not in ["draft", "rejected"]:
+        return redirect("profile")
+
     if request.method == "POST":
 
         form = BlogPostEditForm(
@@ -209,11 +212,14 @@ def post_edit(request, slug):
 
             post = form.save(commit=False)
 
-            # Because the author changed the post,
-            # send it for review again
-            post.status = "pending_review"
+            action = request.POST.get("action")
 
-            # Default SEO values
+            if action == "draft":
+                post.status = "draft"
+
+            else:
+                post.status = "pending_review"
+
             post.seo_title = post.title
             post.seo_description = post.summary
 
@@ -235,7 +241,6 @@ def post_edit(request, slug):
             "post": post,
         },
     )
-
 @login_required(login_url="login")
 @permission_required("blog.delete_blogpost", raise_exception=True)
 @require_POST
@@ -251,51 +256,6 @@ def post_delete(request, slug):
 
     return redirect("profile")
 
-@login_required(login_url="login")
-@permission_required("blog.change_blogpost",raise_exception=True)
-def post_update(request,id):
-    post = get_object_or_404(
-        BlogPost,
-        id=id,
-        author_user=request.user
-    )
-
-    if post.status not in ["draft","rejected"]:
-        return redirect("blog:my_posts")
-
-    if request.method == "POST":
-        form = BlogPostUpdateForm(
-            request.POST,
-            instance=post
-        )
-
-        if form.is_valid():
-            post = form.save(commit=False)
-
-            action = request.POST.get("action")
-
-            if action == "draft":
-                post.status = "draft"
-            else:
-                post.status = "pending_review"
-
-            post.save()
-
-            return redirect("blog:my_posts")
-
-    else:
-        form = BlogPostUpdateForm(
-            instance=post
-        )
-
-    return render(
-        request,
-        "blog/post_update.html",
-        {
-            "form":form,
-            "post":post,
-        }
-    )
 @login_required(login_url="login")
 def editor_posts(request):
 

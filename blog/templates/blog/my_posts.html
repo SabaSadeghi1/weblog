@@ -31,7 +31,7 @@ My Posts
 
             {% if post.status == "draft" or post.status == "rejected" %}
 
-                <a href="{% url 'blog:post_update' post.id %}">
+                <a href="{% url 'blog:post_edit' slug=post.slug %}">
                     Edit
                 </a>
 
