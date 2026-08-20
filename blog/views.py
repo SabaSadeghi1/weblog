@@ -198,8 +198,8 @@ def post_edit(request, slug):
         author_user=request.user,
     )
 
-    if post.status not in ["draft", "rejected"]:
-        return redirect("profile")
+    if post.status not in ["draft", "rejected", "published"]:
+       return redirect("profile")
 
     if request.method == "POST":
 

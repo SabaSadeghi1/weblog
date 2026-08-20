@@ -29,7 +29,7 @@ My Posts
                 {{ post.get_status_display }}
             </p>
 
-            {% if post.status == "draft" or post.status == "rejected" %}
+            {% if post.status == "draft" or post.status == "rejected" or post.status == "published" %}
 
                 <a href="{% url 'blog:post_edit' slug=post.slug %}">
                     Edit
